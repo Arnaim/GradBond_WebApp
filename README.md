@@ -1,6 +1,6 @@
 # GradBond - Alumni Finder & Networking Platform
 
-![GradBond Logo](https://via.placeholder.com/150x50?text=GradBond) <!-- Replace with actual logo -->
+![GradBond Logo](assets/images/logo.png) 
 
 A Flutter-based web application that connects students with alumni through a specialized search system and facilitates networking through events and workshops.
 
