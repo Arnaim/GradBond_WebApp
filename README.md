@@ -28,7 +28,7 @@ A Flutter-based web application that connects students with alumni through a spe
 ## Technologies Used
 
 - **Frontend**: Flutter (Web)
-- **Backend**: Firebase (Authentication, Firestore, Storage)
+- **Backend**:  django, postgresql, RestAPI
 - **State Management**: Provider/Riverpod
 - **Search**: Algolia/Firebase Search (custom implementation)
 - **Additional Packages**: 
