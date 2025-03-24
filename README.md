@@ -1,16 +1,54 @@
-# gradbond
+# GradBond - Alumni Finder & Networking Platform
 
-A new Flutter project.
+![GradBond Logo](https://via.placeholder.com/150x50?text=GradBond) <!-- Replace with actual logo -->
+
+A Flutter-based web application that connects students with alumni through a specialized search system and facilitates networking through events and workshops.
+
+## Features
+
+🔍 **Advanced Alumni Search**  
+- Find alumni using specialized filters (graduation year, degree, company, etc.)
+- Search by skills, industry, or location
+
+🎯 **Alumni Profiles**  
+- Detailed professional profiles
+- Career paths and achievements
+- Contact information (with privacy controls)
+
+📅 **Events & Workshops**  
+- Alumni can create professional events
+- Students can discover and join events
+- Calendar integration for scheduling
+
+🤝 **Networking Tools**  
+- Direct messaging system
+- Connection requests
+- Mentorship opportunities
+
+## Technologies Used
+
+- **Frontend**: Flutter (Web)
+- **Backend**: Firebase (Authentication, Firestore, Storage)
+- **State Management**: Provider/Riverpod
+- **Search**: Algolia/Firebase Search (custom implementation)
+- **Additional Packages**: 
+  - intl for date formatting
+  - url_launcher for external links
+  - cached_network_image for profile pictures
+  - fluttertoast for notifications
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter SDK (latest stable version)
+- Dart SDK
+- Firebase account (for backend services)
+- IDE (VS Code or Android Studio recommended)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/gradbond.git
+   cd gradbond
