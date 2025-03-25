@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/find_alumni.dart';
 import 'login.dart'; 
 
 void main() {
@@ -12,7 +13,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const GradBond(), // Your landing page
+      home: const GradBond(), //landing page
+      routes: {
+        '/login': (context) => const LoginScreen(),  
+        '/search': (context) => const FindAlumni(),
+    // other routes...
+  },
     );
   }
 }
