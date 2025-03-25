@@ -1,5 +1,6 @@
 //login screen
 import 'package:flutter/material.dart';
+import 'package:gradbond/find_alumni.dart';
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -97,11 +98,15 @@ Widget build(BuildContext context){
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: (){
-                          if(_formKey.currentState!.validate()){
-                          //handle login
-                          }
-                        },
-                        
+                           if (_formKey.currentState!.validate()) {
+                              // Handle successful login
+                              Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                              builder: (context) => const FindAlumni(), // Your search page
+                          ),
+                          );
+                        }
+                      },
                         style:  ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromRGBO(49, 125, 56, 1), 
                           padding: const EdgeInsets.symmetric(vertical: 16),

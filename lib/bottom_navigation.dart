@@ -8,28 +8,49 @@ class bottomNavigation extends StatelessWidget{
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        TextButton(
-          onPressed: (){}, 
-          child: const Text("Find Alumni")
+        _buildNavItem(
+          icon: Icons.people,
+          label: "Find Alumni",
+          onPressed: () {},
         ),
-        TextButton(
-          onPressed: (){},
-          child: const Text("Events")
+        _buildNavItem(
+          icon: Icons.event,
+          label: "Events",
+          onPressed: () {},
         ),
-        TextButton(
-          onPressed: (){
-             _showLogoutDialog(context);
+        _buildNavItem(
+          icon: Icons.logout,
+          label: "Log out",
+          onPressed: () {
+            _showLogoutDialog(context);
           },
-          child: const Text("Log out")
         ),
-        TextButton(
-          onPressed: (){
-           // Navigator.push(context, 
-           // MaterialPageRoute(builder: (context) => const ProfilePage()));
+        _buildNavItem(
+          icon: Icons.person,
+          label: "You",
+          onPressed: () {
+            // Navigator.push(context, 
+            // MaterialPageRoute(builder: (context) => const ProfilePage()));
           },
-          child: const Text("You")
         ),
       ],
+    );
+  }
+
+Widget _buildNavItem({required IconData icon, required String label, required VoidCallback onPressed}) {
+    return TextButton(
+      onPressed: onPressed,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.black),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.black),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -38,18 +59,35 @@ void _showLogoutDialog(BuildContext context){
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text("Logout"),
+      title: const Text(
+        "Logout",
+         style: TextStyle(
+         color: Colors.black,
+            ),
+          ),
       content: const Text("Are you sure you want to logout?"),
       actions: [
         TextButton(
-          onPressed: (){},
-          child: const Text("Cancel")
+          onPressed: (){
+              Navigator.pop(context);
+          },
+          child: const Text(
+            "Cancel",
+             style: TextStyle(
+              color: Colors.black,
+            ),
+            )
         ),
         TextButton(
           onPressed: (){
             Navigator.of(context).pushReplacementNamed('/login');
           },
-          child: const Text("Logout")
+          child: const Text(
+            "Logout",
+             style: TextStyle(
+              color: Colors.red,
+            ),
+            )
         )
       ],
     )
