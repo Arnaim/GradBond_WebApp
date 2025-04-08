@@ -1,101 +1,121 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/gradient_bg.dart';
 import 'bottom_navigation.dart';
 
-class FindAlumni extends StatelessWidget{
+class FindAlumni extends StatelessWidget {
   const FindAlumni({super.key});
 
   @override
-  Widget build(BuildContext context){    
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "GradBond - Alumni Finder",
-           style: TextStyle(
-            fontWeight: FontWeight.bold,
-           ),
+      // appBar: AppBar(
+      //   title: const Text(
+      //     "GradBond - Alumni Finder",
+      //     style: TextStyle(
+      //       fontWeight: FontWeight.bold,
+      //     ),
+      //   ),
+      // ),
+      body: GradientBackground(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                "Find Alumni of your University",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const SearchForm(), 
+            ],
           ),
+        ),
       ),
-    body: Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
-            "Find Alumni of you University",
-             style: TextStyle(
-              fontWeight: FontWeight.bold,
-               fontSize: 24),
-            ),
-           _searchForm(),
-           SizedBox(height: 20,),
-          
-        ],
-      ),
-      ),
-    bottomNavigationBar:  bottomNavigation(context: context),
+      bottomNavigationBar: bottomNavigation(context: context),
     );
-    
   }
 }
 
-class _searchForm extends StatelessWidget{
-  const _searchForm();
+
+class SearchForm extends StatelessWidget {
+  const SearchForm({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+       child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.0),
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFE3DAFF), // Light purple
+            Color(0xFFE8E5E5), // Light grayish white
+          ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextFormField(
               decoration: const InputDecoration(
-              labelText: "University",
-              border: OutlineInputBorder(),
+                labelText: "University",
+                border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextFormField(
               decoration: const InputDecoration(
                 labelText: "Department",
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 16,),
+            const SizedBox(height: 16),
             TextFormField(
               decoration: const InputDecoration(
                 labelText: "Company",
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 16,),
+            const SizedBox(height: 16),
             TextFormField(
               decoration: const InputDecoration(
                 labelText: "Title",
                 border: OutlineInputBorder(),
               ),
             ),
-           const SizedBox(height: 16,),
-           ElevatedButton(
-            onPressed: (){
-              //handle search function
-            },
-            child: const Text(
-              "Find Now",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // Handle search function
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(58, 29, 111, 1),
+                minimumSize: const Size(200, 50),
               ),
+              child: const Text(
+                "Find Now",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              style:  ElevatedButton.styleFrom(
-                backgroundColor: Color.fromRGBO(58, 29, 111, 1),
-                minimumSize: const Size(200, 50)
-              )
-              )
-          ]
+            ),
+          ],
         ),
-        ),
+      ),
+      )
     );
   }
 }

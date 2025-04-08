@@ -1,6 +1,9 @@
 //login screen
 import 'package:flutter/material.dart';
 import 'package:gradbond/find_alumni.dart';
+import 'package:gradbond/gradient_bg.dart';
+import 'signup_options.dart';
+import 'auth_service.dart';
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -25,8 +28,8 @@ class _LoginScreenState extends State<LoginScreen>{
 @override
 Widget build(BuildContext context){
   return Scaffold(
-    body: Padding(
-      padding: EdgeInsets.all(24.0),
+    body: GradientBackground(
+      child: Padding(padding: EdgeInsets.all(24.0),
       child: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -97,24 +100,30 @@ Widget build(BuildContext context){
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: (){
+                      onPressed: () async {
                            if (_formKey.currentState!.validate()) {
-                              // Handle successful login
-                              Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                              builder: (context) => const FindAlumni(), // Your search page
-                          ),
-                          );
-                        }
-                      },
+                                final email = _emailController.text.trim();
+                                final password = _passwordController.text;
+    
+                                final success = await AuthService.login(email, password);
+    
+                           if (success) {
+                                Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(builder: (context) => const FindAlumni()),
+                           );
+                           } else {
+                                AuthService.showAuthError(context, 'Invalid email or password');
+                           }
+                         }
+                       },
                         style:  ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(49, 125, 56, 1), 
+                          backgroundColor: const Color.fromRGBO(58, 29, 111, 1), 
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         child: const Text(
                           'Login',
                           style: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1)
+                          color: Color.fromRGBO(255, 255, 255, 1)
                           ),
                           ),
                         ),
@@ -129,7 +138,7 @@ Widget build(BuildContext context){
                     const Text("Don't have an account?"),
                     TextButton(
                       onPressed: (){
-                        //handle sign up
+                          SignupChoiceDialog.show(context); // Using the reusable dialog
                       }, 
                       child: const Text(
                         'Sign up',
@@ -145,6 +154,7 @@ Widget build(BuildContext context){
         )
       ),
       ),
+  )
   );
 }
 }
