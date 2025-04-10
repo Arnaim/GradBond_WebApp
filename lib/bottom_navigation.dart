@@ -11,12 +11,16 @@ class bottomNavigation extends StatelessWidget{
         _buildNavItem(
           icon: Icons.people,
           label: "Find Alumni",
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, "/search");
+          },
         ),
         _buildNavItem(
           icon: Icons.event,
           label: "Events",
-          onPressed: () {},
+          onPressed: () {
+           // Navigator.pushNamed(context, "/event");
+          },
         ),
         _buildNavItem(
           icon: Icons.logout,

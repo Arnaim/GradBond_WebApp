@@ -1,9 +1,9 @@
 //login screen
 import 'package:flutter/material.dart';
-import 'package:gradbond/find_alumni.dart';
 import 'package:gradbond/gradient_bg.dart';
 import 'signup_options.dart';
 import 'auth_service.dart';
+import 'home.dart'; 
 
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -101,21 +101,24 @@ Widget build(BuildContext context){
                       width: double.infinity,
                       child: ElevatedButton(
                       onPressed: () async {
-                           if (_formKey.currentState!.validate()) {
-                                final email = _emailController.text.trim();
-                                final password = _passwordController.text;
-    
-                                final success = await AuthService.login(email, password);
-    
-                           if (success) {
-                                Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(builder: (context) => const FindAlumni()),
-                           );
-                           } else {
-                                AuthService.showAuthError(context, 'Invalid email or password');
+                              if (_formKey.currentState!.validate()) {
+                                  final email = _emailController.text.trim();
+                                  final password = _passwordController.text;
+
+                                  final success = await AuthService.login(email, password);
+
+                              if (success) {
+                                  Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                // Changed from FindAlumni to HomePage
+                                   builder: (context) =>  HomePage(),
+                               ),
+                              );
+                             } else {
+                               AuthService.showAuthError(context, 'Invalid email or password');
                            }
                          }
-                       },
+                      },
                         style:  ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromRGBO(58, 29, 111, 1), 
                           padding: const EdgeInsets.symmetric(vertical: 16),
