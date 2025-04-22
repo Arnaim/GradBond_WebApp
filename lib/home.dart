@@ -306,4 +306,3 @@ Widget _buildAlumniCard(String name, String position, String company, String uni
 }
 
 
-//a@gmail.com

@@ -4,6 +4,7 @@ import 'login.dart';
 import 'student_signup.dart'; 
 import 'alumni_signup.dart';
 import 'signup_options.dart';
+import 'events.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         '/search': (context) => const FindAlumni(),
         '/signup': (context) => const StudentSignup(), 
         '/alumni-signup': (context) => const AlumniSignup(),
+        '/event': (context) => const EventsPage(),
       },
     );
   }
@@ -154,3 +156,4 @@ class GradBond extends StatelessWidget {
     );
   }
 }
+

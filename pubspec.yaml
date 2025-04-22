@@ -74,6 +74,7 @@ flutter:
     - assets/images/event_card_placeholder3.png
     - assets/images/event_card_placeholder4.png
     - assets/images/event_card_placeholder5.png
+    - assets/images/event_card_placeholder6.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

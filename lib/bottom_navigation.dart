@@ -19,7 +19,7 @@ class bottomNavigation extends StatelessWidget{
           icon: Icons.event,
           label: "Events",
           onPressed: () {
-           // Navigator.pushNamed(context, "/event");
+            Navigator.pushNamed(context, "/event");
           },
         ),
         _buildNavItem(
