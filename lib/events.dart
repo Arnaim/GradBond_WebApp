@@ -34,57 +34,63 @@ class _EventsPageState extends State<EventsPage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 242, 238, 255),
       body: GradientBackground(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Recent Events/Workshops',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+  child: SafeArea(
+    child: SingleChildScrollView(
+      child: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Recent Events/Workshops',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: dummyEvents.length,
-                itemBuilder: (context, index) {
-                  final event = dummyEvents[index];
-                  final parsedDate = DateTime.tryParse(event['date']!);
-                  return EventCard(
-                    title: event['title']!,
-                    imagePath: event['image']!,
-                    dateTime: parsedDate ??
-                    DateTime.now().subtract(const Duration(days: 1)),
-                  );
-                },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GridView.builder(
+              shrinkWrap: true, // <- Important
+              physics: const NeverScrollableScrollPhysics(), // Disable internal scroll
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 0.65,
               ),
-            ),
-            const SizedBox(height: 10),
-            PaginationSection(
-              currentPage: _currentPage,
-              totalPages: _totalPages,
-              onPageChanged: (page) {
-                setState(() => _currentPage = page);
+              itemCount: dummyEvents.length,
+              itemBuilder: (context, index) {
+                final event = dummyEvents[index];
+                final parsedDate = DateTime.tryParse(event['date']!);
+                return EventCard(
+                  title: event['title']!,
+                  imagePath: event['image']!,
+                  dateTime: parsedDate ?? DateTime.now().subtract(const Duration(days: 1)),
+                );
               },
             ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: bottomNavigation(context: context),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 10),
+          PaginationSection(
+            currentPage: _currentPage,
+            totalPages: _totalPages,
+            onPageChanged: (page) {
+              setState(() => _currentPage = page);
+            },
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: bottomNavigation(context: context),
+          ),
+        ],
       ),
+    ),
+  ),
+),
+
     );
   }
 }
@@ -106,7 +112,7 @@ final List<Map<String, String>> dummyEvents = [
     "image": "assets/images/event_card_placeholder3.png",
   },
   {
-    "title": "Future of AI: Tech Meetup",
+    "title": "AI: Tech Meetup",
     "date": "2025-07-15 14:00:00",
     "image": "assets/images/event_card_placeholder4.png",
   },
@@ -188,102 +194,108 @@ class _EventCardState extends State<EventCard> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          
-        },
+        onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: Image.asset(
-                widget.imagePath,
-                height: 120,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  height: 120,
-                  color: const Color.fromARGB(255, 245, 231, 231),
-                  child: const Icon(Icons.broken_image, size: 40),
+            // Image
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                child: Image.asset(
+                  widget.imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: const Color.fromARGB(255, 245, 231, 231),
+                    child: const Center(child: Icon(Icons.broken_image, size: 40)),
+                  ),
                 ),
               ),
             ),
+            // Title
             Padding(
               padding: const EdgeInsets.all(12),
-              child: Center(
-                child: Text(
+              child: Text(
                 widget.title,
+                textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                ),
               ),
             ),
+            // Countdown
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Column(
                 children: [
                   Text(
                     _eventEnded ? "EVENT COMPLETED" : "TIME REMAINING",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                    ),
+                    style: const TextStyle(fontSize: 9, color: Colors.white),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                     decoration: BoxDecoration(
-                      color: _eventEnded ? const Color.fromARGB(255, 255, 255, 255) : const Color.fromARGB(255, 255, 255, 255),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
-                      _countdown,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        backgroundColor: Colors.white,
-                        color: Colors.deepPurple,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        _countdown,
+                        style: const TextStyle(
+                          color: Colors.deepPurple,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 8),
+            // Buttons
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
               child: Row(
                 children: [
-              Expanded(
-                      child: TextButton(
+                  Expanded(
+                    child: TextButton(
                         style: TextButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.1),
+                          backgroundColor: Colors.white.withOpacity(0.1),
+                          minimumSize: const Size(0, 36), 
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        onPressed: () {
-                          // Handle registration/view recap
-                        },
+                        onPressed: () {},
                         child: Text(
                           _eventEnded ? "Recap" : "Register",
                           style: const TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                           // fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 10.5, // go even smaller if needed
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5,
                           ),
                         ),
-                      ),
-                    ),
+                      )
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextButton(
                       style: TextButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.1),
+                        minimumSize: const Size(90, 36), // 🔥 Add width (90 is usually safe)
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        backgroundColor: Colors.white.withOpacity(0.1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -291,10 +303,14 @@ class _EventCardState extends State<EventCard> {
                       onPressed: () {},
                       child: const Text(
                         "See more",
-                        style: TextStyle(color: Color.fromARGB(255, 255, 255, 255),//fontWeight: FontWeight.bold
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.5,
                         ),
                       ),
-                    ),
+                    )
                   ),
                 ],
               ),
@@ -305,6 +321,7 @@ class _EventCardState extends State<EventCard> {
     );
   }
 }
+
 
 class PaginationSection extends StatelessWidget {
   final int currentPage;
