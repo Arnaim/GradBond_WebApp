@@ -5,6 +5,8 @@ import 'student_signup.dart';
 import 'alumni_signup.dart';
 import 'signup_options.dart';
 import 'events.dart';
+import 'profile_alumni.dart';
+import 'profile_student.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,13 +20,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const GradBond(),
-      routes: {
-        '/login': (context) => const LoginScreen(),  
-        '/search': (context) => const FindAlumni(),
-        '/signup': (context) => const StudentSignup(), 
-        '/alumni-signup': (context) => const AlumniSignup(),
-        '/event': (context) => const EventsPage(),
-      },
+     routes: {
+          '/login': (context) => const LoginScreen(),  
+          '/search': (context) => const FindAlumni(),
+          '/signup': (context) => const StudentSignup(), 
+          '/alumni-signup': (context) => const AlumniSignup(),
+          '/event': (context) => const EventsPage(),
+          '/profile_alumni': (context) => const ProfileAlumni(), 
+          '/profile_student': (context) => const ProfileStudent(), 
+        },
     );
   }
 }

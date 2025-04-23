@@ -29,12 +29,11 @@ class bottomNavigation extends StatelessWidget{
             _showLogoutDialog(context);
           },
         ),
-        _buildNavItem(
+       _buildNavItem(
           icon: Icons.person,
           label: "You",
           onPressed: () {
-            // Navigator.push(context, 
-            // MaterialPageRoute(builder: (context) => const ProfilePage()));
+            _showUserTypeDialog(context);
           },
         ),
       ],
@@ -95,5 +94,34 @@ void _showLogoutDialog(BuildContext context){
         )
       ],
     )
+  );
+}
+
+void _showUserTypeDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Select User Type"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: const Text("Alumni"),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, "/profile_alumni");
+            },
+          ),
+          ListTile(
+            title: const Text("Student"),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(
+                  context, "/profile_student"); // Added student navigation
+            },
+          ),
+        ],
+      ),
+    ),
   );
 }
