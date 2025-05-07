@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'gradient_bg.dart';
 import 'bottom_navigation.dart';
 
@@ -14,10 +16,12 @@ class _EventsPageState extends State<EventsPage> {
   int _currentPage = 1;
   final int _totalPages = 3;
   late Timer _timer;
+  late Future<List<Map<String, String>>> _eventsFuture;
 
   @override
   void initState() {
     super.initState();
+    _eventsFuture = fetchEvents();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() {});
     });
@@ -29,104 +33,99 @@ class _EventsPageState extends State<EventsPage> {
     super.dispose();
   }
 
+Future<List<Map<String, String>>> fetchEvents() async {
+  final response = await http.get(Uri.parse('https://gradbond.vercel.app/api/events/'));
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> json = jsonDecode(response.body);
+    final List<dynamic> events = json['events'];
+
+    return events.map<Map<String, String>>((event) => {
+      "title": event['name'] ?? "No Title", // Use correct key: 'name' not 'title'
+      "date": event['date'] ?? DateTime.now().toIso8601String(),
+      "image": "assets/images/event_card_placeholder1.png",
+    }).toList();
+  } else {
+    throw Exception('Failed to load events');
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 242, 238, 255),
       body: GradientBackground(
-  child: SafeArea(
-    child: SingleChildScrollView(
-      child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Recent Events/Workshops',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: GridView.builder(
-              shrinkWrap: true, // <- Important
-              physics: const NeverScrollableScrollPhysics(), // Disable internal scroll
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 0.65,
-              ),
-              itemCount: dummyEvents.length,
-              itemBuilder: (context, index) {
-                final event = dummyEvents[index];
-                final parsedDate = DateTime.tryParse(event['date']!);
-                return EventCard(
-                  title: event['title']!,
-                  imagePath: event['image']!,
-                  dateTime: parsedDate ?? DateTime.now().subtract(const Duration(days: 1)),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 10),
-          PaginationSection(
-            currentPage: _currentPage,
-            totalPages: _totalPages,
-            onPageChanged: (page) {
-              setState(() => _currentPage = page);
+        child: SafeArea(
+          child: FutureBuilder<List<Map<String, String>>>(
+            future: _eventsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text("Error: ${snapshot.error}"));
+              }
+
+              final events = snapshot.data!;
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text(
+                        'Recent Events/Workshops',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 0.65,
+                        ),
+                        itemCount: events.length,
+                        itemBuilder: (context, index) {
+                          final event = events[index];
+                          final parsedDate = DateTime.tryParse(event['date']!);
+                          return EventCard(
+                            title: event['title']!,
+                            imagePath: event['image']!,
+                            dateTime: parsedDate ?? DateTime.now(),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    PaginationSection(
+                      currentPage: _currentPage,
+                      totalPages: _totalPages,
+                      onPageChanged: (page) {
+                        setState(() => _currentPage = page);
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: bottomNavigation(context: context),
+                    ),
+                  ],
+                ),
+              );
             },
           ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: bottomNavigation(context: context),
-          ),
-        ],
+        ),
       ),
-    ),
-  ),
-),
-
     );
   }
 }
-
-final List<Map<String, String>> dummyEvents = [
-  {
-    "title": "Graduation Ceremony",
-    "date": "2024-05-24 15:00:00",
-    "image": "assets/images/event_card_placeholder1.png",
-  },
-  {
-    "title": "Alumni (Iftar Party)",
-    "date": "2025-06-01 18:00:00",
-    "image": "assets/images/event_card_placeholder2.png",
-  },
-  {
-    "title": "Tech Conference",
-    "date": "2025-06-10 10:00:00",
-    "image": "assets/images/event_card_placeholder3.png",
-  },
-  {
-    "title": "AI: Tech Meetup",
-    "date": "2025-07-15 14:00:00",
-    "image": "assets/images/event_card_placeholder4.png",
-  },
-  {
-    "title": "Startup Pitch Night",
-    "date": "2025-08-02 19:00:00",
-    "image": "assets/images/event_card_placeholder5.png",
-  },
-  {
-    "title": "Annual Alumni Meetup",
-    "date": "2025-09-05 17:30:00",
-    "image": "assets/images/event_card_placeholder6.png",
-  },
-];
 
 class EventCard extends StatefulWidget {
   final String title;
