@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'gradient_bg.dart';
 import 'bottom_navigation.dart';
 
@@ -43,7 +44,9 @@ Future<List<Map<String, String>>> fetchEvents() async {
     return events.map<Map<String, String>>((event) => {
       "title": event['name'] ?? "No Title", // Use correct key: 'name' not 'title'
       "date": event['date'] ?? DateTime.now().toIso8601String(),
-      "image": "assets/images/event_card_placeholder1.png",
+      "time": event['time'] ?? "00:00",
+      "image": event['image_url'] ?? "assets/images/event_card_placeholder1.png",
+      "createdBy": event['created_by'] ?? "Unknown",
     }).toList();
   } else {
     throw Exception('Failed to load events');
@@ -95,11 +98,13 @@ Future<List<Map<String, String>>> fetchEvents() async {
                         itemBuilder: (context, index) {
                           final event = events[index];
                           final parsedDate = DateTime.tryParse(event['date']!);
-                          return EventCard(
-                            title: event['title']!,
-                            imagePath: event['image']!,
-                            dateTime: parsedDate ?? DateTime.now(),
-                          );
+                         return EventCard(
+                          title: event['title']!,
+                          imagePath: event['image']!,
+                          dateTime: parsedDate ?? DateTime.now(),
+                          createdBy: event['createdBy']!,
+                          time: event['time']!,
+                        );
                         },
                       ),
                     ),
@@ -131,12 +136,16 @@ class EventCard extends StatefulWidget {
   final String title;
   final DateTime dateTime;
   final String imagePath;
+  final String createdBy;
+  final String time; // New
 
   const EventCard({
     super.key,
     required this.title,
     required this.dateTime,
     required this.imagePath,
+    required this.createdBy,
+    required this.time,
   });
 
   @override
@@ -187,6 +196,8 @@ class _EventCardState extends State<EventCard> {
 
   @override
   Widget build(BuildContext context) {
+    final formattedDate = DateFormat('MMMM d, y').format(widget.dateTime); // e.g., May 15, 2025
+    final formattedTime = DateFormat('hh:mm a').format(widget.dateTime);   // e.g., 02:53 AM
     return Card(
       elevation: 4,
       color: const Color.fromRGBO(58, 29, 111, 1),
@@ -202,14 +213,14 @@ class _EventCardState extends State<EventCard> {
               aspectRatio: 16 / 9,
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.asset(
-                  widget.imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    color: const Color.fromARGB(255, 245, 231, 231),
-                    child: const Center(child: Icon(Icons.broken_image, size: 40)),
-                  ),
+                child: Image.network(
+                widget.imagePath,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  color: Color.fromARGB(255, 245, 231, 231),
+                  child: Center(child: Icon(Icons.broken_image, size: 40)),
                 ),
+              ),
               ),
             ),
             // Title
@@ -220,7 +231,7 @@ class _EventCardState extends State<EventCard> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: 2,
@@ -229,35 +240,22 @@ class _EventCardState extends State<EventCard> {
             ),
             // Countdown
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    _eventEnded ? "EVENT COMPLETED" : "TIME REMAINING",
-                    style: const TextStyle(fontSize: 9, color: Colors.white),
+                    "Created By: ${widget.createdBy}",
+                    style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold ),
                   ),
-                  const SizedBox(height: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        _countdown,
-                        style: const TextStyle(
-                          color: Colors.deepPurple,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
+                  Text(
+                    "$formattedDate | $formattedTime",
+                    style: const TextStyle(color: Colors.white, fontSize: 10),
                   ),
                 ],
               ),
             ),
+        const SizedBox(height: 8),
             const SizedBox(height: 8),
             // Buttons
             Padding(
