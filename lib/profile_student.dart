@@ -172,7 +172,7 @@ class ProfileStudent extends StatelessWidget {
 
 class _SkillChip extends StatelessWidget {
   final String label;
-  const _SkillChip(this.label, {super.key});
+  const _SkillChip(this.label);
 
   @override
   Widget build(BuildContext context) {
