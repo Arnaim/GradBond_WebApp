@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gradbond/find_alumni.dart';
 import 'login.dart'; 
-import 'student_signup.dart'; 
-import 'alumni_signup.dart';
-import 'signup_options.dart';
+//import 'student_signup.dart'; 
+//import 'alumni_signup.dart';
+import 'signup_page.dart';
 import 'events.dart';
 import 'profile_alumni.dart';
 import 'profile_student.dart';
@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
      routes: {
           '/login': (context) => const LoginScreen(),  
           '/search': (context) => const FindAlumni(),
-          '/signup': (context) => const StudentSignup(), 
-          '/alumni-signup': (context) => const AlumniSignup(),
+          '/signup': (context) => const SignUpPage(), 
+         // '/alumni-signup': (context) => const AlumniSignup(),
           '/event': (context) => EventsPage(),
           '/profile_alumni': (context) => const ProfileAlumni(), 
           '/profile_student': (context) => const ProfileStudent(), 
@@ -101,9 +101,12 @@ class GradBond extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                          SignupChoiceDialog.show(context); // Using the reusable dialog
-                      },
+                     onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SignUpPage()),
+                            );
+                          },
                       child: const Text(
                         'Sign Up',
                         style: TextStyle(

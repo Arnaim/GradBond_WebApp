@@ -1,7 +1,7 @@
 //login screen
 import 'package:flutter/material.dart';
 import 'package:gradbond/gradient_bg.dart';
-import 'signup_options.dart';
+import 'signup_page.dart';
 import 'package:gradbond/services/api_service.dart';
 import 'home.dart'; 
 
@@ -140,9 +140,12 @@ Widget build(BuildContext context){
                   children: [
                     const Text("Don't have an account?"),
                     TextButton(
-                      onPressed: (){
-                          SignupChoiceDialog.show(context); // Using the reusable dialog
-                      }, 
+                       onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SignUpPage()),
+                            );
+                          },
                       child: const Text(
                         'Sign up',
                         style: TextStyle(
