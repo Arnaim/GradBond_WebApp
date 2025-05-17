@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:gradbond/gradient_bg.dart';
 import 'signup_options.dart';
-import 'auth_service.dart';
+import 'package:gradbond/services/api_service.dart';
 import 'home.dart'; 
 
 class LoginScreen extends StatefulWidget{

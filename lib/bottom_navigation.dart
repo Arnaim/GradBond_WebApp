@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/services/api_service.dart'; 
 
 class bottomNavigation extends StatelessWidget{
   final BuildContext context;
@@ -22,12 +23,10 @@ class bottomNavigation extends StatelessWidget{
             Navigator.pushNamed(context, "/event");
           },
         ),
-        _buildNavItem(
+         _buildNavItem(
           icon: Icons.logout,
           label: "Log out",
-          onPressed: () {
-            _showLogoutDialog(context);
-          },
+          onPressed: () => _showLogoutDialog(context),
         ),
        _buildNavItem(
           icon: Icons.person,
@@ -58,44 +57,36 @@ Widget _buildNavItem({required IconData icon, required String label, required Vo
   }
 }
 
-void _showLogoutDialog(BuildContext context){
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text(
-        "Logout",
-         style: TextStyle(
-         color: Colors.black,
-            ),
+void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Logout", style: TextStyle(color: Colors.black)),
+        content: const Text("Are you sure you want to logout?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel", style: TextStyle(color: Colors.black)),
           ),
-      content: const Text("Are you sure you want to logout?"),
-      actions: [
-        TextButton(
-          onPressed: (){
-              Navigator.pop(context);
-          },
-          child: const Text(
-            "Cancel",
-             style: TextStyle(
-              color: Colors.black,
-            ),
-            )
-        ),
-        TextButton(
-          onPressed: (){
-            Navigator.of(context).pushReplacementNamed('/login');
-          },
-          child: const Text(
-            "Logout",
-             style: TextStyle(
-              color: Colors.red,
-            ),
-            )
-        )
-      ],
-    )
-  );
-}
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context); // Close dialog first
+              final success = await AuthService.logout(context);
+              if (success) {
+                // Clear entire navigation stack and go to login
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/login',
+                  (route) => false,
+                );
+              }
+            },
+            child: const Text("Logout", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
 
 void _showUserTypeDialog(BuildContext context) {
   showDialog(
