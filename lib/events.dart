@@ -53,37 +53,38 @@ Future<List<Map<String, String>>> fetchEvents() async {
   }
 }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 242, 238, 255),
-      body: GradientBackground(
-        child: SafeArea(
-          child: FutureBuilder<List<Map<String, String>>>(
-            future: _eventsFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text("Error: ${snapshot.error}"));
-              }
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color.fromARGB(255, 242, 238, 255),
+    body: GradientBackground(
+      child: SafeArea(
+        child: FutureBuilder<List<Map<String, String>>>(
+          future: _eventsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text("Error: ${snapshot.error}"));
+            }
 
-              final events = snapshot.data!;
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(
-                        'Recent Events/Workshops',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
+            final events = snapshot.data!;
+            return Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Recent Events/Workshops',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
-                    Padding(
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: GridView.builder(
                         shrinkWrap: true,
@@ -98,38 +99,36 @@ Future<List<Map<String, String>>> fetchEvents() async {
                         itemBuilder: (context, index) {
                           final event = events[index];
                           final parsedDate = DateTime.tryParse(event['date']!);
-                         return EventCard(
-                          title: event['title']!,
-                          imagePath: event['image']!,
-                          dateTime: parsedDate ?? DateTime.now(),
-                          createdBy: event['createdBy']!,
-                          time: event['time']!,
-                        );
+                          return EventCard(
+                            title: event['title']!,
+                            imagePath: event['image']!,
+                            dateTime: parsedDate ?? DateTime.now(),
+                            createdBy: event['createdBy']!,
+                            time: event['time']!,
+                          );
                         },
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    PaginationSection(
-                      currentPage: _currentPage,
-                      totalPages: _totalPages,
-                      onPageChanged: (page) {
-                        setState(() => _currentPage = page);
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: bottomNavigation(context: context),
-                    ),
-                  ],
+                  ),
                 ),
-              );
-            },
-          ),
+                const SizedBox(height: 10),
+                PaginationSection(
+                  currentPage: _currentPage,
+                  totalPages: _totalPages,
+                  onPageChanged: (page) {
+                    setState(() => _currentPage = page);
+                  },
+                ),
+                const SizedBox(height: 10),
+              ],
+            );
+          },
         ),
       ),
-    );
-  }
+    ),
+    bottomNavigationBar: bottomNavigation(context: context),
+  );
+ }
 }
 
 class EventCard extends StatefulWidget {

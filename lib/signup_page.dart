@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'gradient_bg.dart';
 import 'package:gradbond/services/api_service.dart';
+import 'login.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -166,7 +167,10 @@ class _SignUpPageState extends State<SignUpPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Signup successful!')),
                             );
-                            Navigator.pop(context); // Go back to login
+                         Navigator.push(
+                             context,
+                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            );// Go to login
                           } else {
                             print('Signup failed');
                             ScaffoldMessenger.of(context).showSnackBar(

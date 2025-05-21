@@ -24,6 +24,13 @@ class bottomNavigation extends StatelessWidget{
           },
         ),
          _buildNavItem(
+            icon: Icons.work,
+            label: "Jobs",
+            onPressed: () {
+              Navigator.pushNamed(context, "/jobs");
+            },
+          ),
+         _buildNavItem(
           icon: Icons.logout,
           label: "Log out",
           onPressed: () => _showLogoutDialog(context),

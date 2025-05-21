@@ -7,6 +7,7 @@ import 'signup_page.dart';
 import 'events.dart';
 import 'profile_alumni.dart';
 import 'profile_student.dart';
+import 'jobs.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
           '/event': (context) => EventsPage(),
           '/profile_alumni': (context) => const ProfileAlumni(), 
           '/profile_student': (context) => const ProfileStudent(), 
+          '/jobs': (context) => const JobBoardPage()
         },
     );
   }
@@ -124,36 +126,6 @@ class GradBond extends StatelessWidget {
                       fontSize: 12,
                     ),
                   ),
-                  const SizedBox(height: 60),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Image.asset(
-                          'assets/images/facebook.png',
-                          height: 48,
-                          width: 48,                        
-                        ),                                 
-                        onPressed: (){},
-                      ),
-                      IconButton(
-                        icon: Image.asset(
-                        'assets/images/linkedin.png',
-                        height: 32,
-                        width: 32, 
-                        ),
-                        onPressed: (){}
-                      ),
-                      IconButton(
-                        icon: Image.asset(
-                          'assets/images/x.png',
-                          height: 44,
-                          width: 44, 
-                          ),
-                        onPressed: (){}
-                      ),
-                    ],
-                  )
                 ],
               ),
             ),
