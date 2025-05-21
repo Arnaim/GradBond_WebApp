@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'gradient_bg.dart';
+import 'package:gradbond/services/api_service.dart';
+
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -17,10 +19,6 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create a new Account'),
-        centerTitle: true,
-      ),
       body: GradientBackground(
         child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -29,6 +27,16 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                  child: Text(
+                    'Create a new account',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               const SizedBox(height: 20),
               const Text(
                 'Choose your option',
@@ -47,11 +55,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 hint: const Text('I am a/an'),
                 items: const [
                   DropdownMenuItem(
-                    value: 'Student',
+                    value: 'student',
                     child: Text('Student'),
                   ),
                   DropdownMenuItem(
-                    value: 'Alumni',
+                    value: 'alumni',
                     child: Text('Alumni'),
                   ),
                 ],
@@ -140,11 +148,36 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Handle sign up logic
-                    }
-                  },
+                 onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          print('Attempting signup with:');
+                          print('UserType: ${selectedUserType}');
+                          print('Email: ${_emailController.text.trim()}');
+                          print('Password: ${_passwordController.text}');
+
+                          final success = await AuthService.signup(
+                            selectedUserType ?? '',
+                            _emailController.text.trim(),
+                            _passwordController.text,
+                          );
+
+                          if (success) {
+                            print('Signup successful!');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Signup successful!')),
+                            );
+                            Navigator.pop(context); // Go back to login
+                          } else {
+                            print('Signup failed');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Signup failed. Please try again.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     backgroundColor: Colors.deepPurple,

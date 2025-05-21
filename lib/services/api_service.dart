@@ -1,32 +1,28 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:gradbond/models/event_model.dart';
+import 'dart:html' as html; // Only works on web
 
 class ApiService {
   static const String baseUrl = 'https://gradbond.vercel.app/api';
 
   static Future<List<Event>> fetchEvents() async {
     try {
-      print('Fetching events from: $baseUrl/events/'); // Debug
+      print('Fetching events from: $baseUrl/events/');
       final response = await http.get(
         Uri.parse('$baseUrl/events/'),
         headers: {'Accept': 'application/json'},
       );
 
-      print('API Response Status: ${response.statusCode}'); // Debug
-      print('API Response Body: ${response.body}'); // Debug
+      print('API Response Status: ${response.statusCode}');
+      print('API Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
-        
-        // Debug: Print the decoded data structure
-        print('Decoded Data Type: ${data.runtimeType}');
-        print('Decoded Data Keys: ${data.keys}');
-
-        // Extract the 'events' list
-        final List<dynamic> eventsJson = data['events'] as List; // Explicit cast
+        final List<dynamic> eventsJson = data['events'] as List;
         return eventsJson.map((json) => Event.fromJson(json)).toList();
       } else {
         throw Exception("HTTP ${response.statusCode}: ${response.body}");
@@ -38,11 +34,41 @@ class ApiService {
   }
 }
 
+class StorageService {
+  static Future<void> saveToken(String token) async {
+    if (kIsWeb) {
+      html.window.localStorage['auth_token'] = token;
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', token);
+    }
+  }
+
+  static Future<String?> getToken() async {
+    if (kIsWeb) {
+      return html.window.localStorage['auth_token'];
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('auth_token');
+    }
+  }
+
+  static Future<void> clearToken() async {
+    if (kIsWeb) {
+      html.window.localStorage.remove('auth_token');
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('auth_token');
+    }
+  }
+}
 
 class AuthService {
   static const String loginUrl = 'https://gradbond.vercel.app/api/login/';
+  static const String logoutUrl = 'https://gradbond.vercel.app/api/logout/';
+  static const String signupUrl = 'https://gradbond.vercel.app/api/signup/';
 
-  static Future<bool> login(String email, String password) async {
+static Future<bool> login(String email, String password) async {
   try {
     final response = await http.post(
       Uri.parse(loginUrl),
@@ -51,25 +77,24 @@ class AuthService {
         'Accept': 'application/json',
       },
       body: jsonEncode({
-        'email': email.trim(), 
+        'email': email.trim(),
         'password': password,
       }),
     );
 
-    print('API Response: ${response.statusCode} - ${response.body}');
+    print('Login Response: ${response.statusCode} - ${response.body}');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      
-      // Check both HTTP 200 AND JSON status 200
-      if (data['status'] == 200 && data['token'] != null) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('auth_token', data['token']);
+      if (data['status'] == 200 && data['token'] is String) {
+        await StorageService.saveToken(data['token']);
         print('Login successful! Token saved.');
         return true;
       }
+      // Check if cookies are being set
+      print('Response headers: ${response.headers}');
     }
-    
+
     print('Login failed. Status: ${response.statusCode}');
     return false;
   } catch (e) {
@@ -77,56 +102,80 @@ class AuthService {
     return false;
   }
 }
-static Future<bool> isLoggedIn() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token') != null;
+
+  static Future<bool> isLoggedIn() async {
+    final token = await StorageService.getToken();
+    return token != null;
   }
 
-  // logout method
-static Future<bool> logout(BuildContext context) async {
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token'); // Changed from authToken to auth_token
-    
-    if (token == null) {
-      // No token found, consider user already logged out
-      return true;
-    }
+  static Future<bool> logout(BuildContext context) async {
+    try {
+      final token = await StorageService.getToken();
 
-    final response = await http.get(
-      Uri.parse('https://gradbond.vercel.app/api/logout/'), // Using full URL for consistency
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json', // Added Accept header
-      },
-    );
+      if (token == null) {
+        return true; // Already logged out
+      }
 
-    print('Logout Response: ${response.statusCode} - ${response.body}');
+      // Optional: Call backend logout if needed
+      /*
+      final response = await http.get(
+        Uri.parse(logoutUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+      print('Logout Response: ${response.statusCode} - ${response.body}');
+      */
 
-    final responseData = jsonDecode(response.body);
-    
-    if (response.statusCode == 200 && responseData['status'] == 200) {
-      // Clear stored credentials
-      await prefs.remove('auth_token');
-      await prefs.remove('userData');
-      
-      // Show success message
+      await StorageService.clearToken();
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Logged out successfully')),
       );
-      
+
       return true;
-    } else {
-      // Handle logout error
-      final errorMessage = responseData['message'] ?? 'Logout failed. Please try again.';
-      showAuthError(context, errorMessage);
+    } catch (e) {
+      showAuthError(context, 'An error occurred during logout.');
       return false;
     }
+  }
+
+static Future<bool> signup(String userType, String email, String password) async {
+  try {
+    print('Sending userType: $userType');
+    await StorageService.clearToken();
+    final response = await http.post(
+      Uri.parse(signupUrl),
+      body: jsonEncode({
+        'userType': userType,
+        'email': email.trim(),
+        'pass1': password,
+        'pass2': password,
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    print('Signup Response: ${response.statusCode} - ${response.body}');
+    
+    // Consider 200 status as success even without token
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      // If token exists, save it (for APIs that auto-login)
+      if (data['token'] != null) {
+        await StorageService.saveToken(data['token']);
+      }
+      return true; // Success if status is 200
+    }
+    return false;
   } catch (e) {
-    showAuthError(context, 'An error occurred during logout.');
+    print('Signup error: $e');
     return false;
   }
 }
+
+
+
 
   static void showAuthError(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -137,4 +186,3 @@ static Future<bool> logout(BuildContext context) async {
     );
   }
 }
-
