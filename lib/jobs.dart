@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gradbond/models/job_model.dart';
 import 'package:gradbond/services/api_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'bottom_navigation.dart';
 import 'gradient_bg.dart';
 import 'package:intl/intl.dart';
@@ -113,8 +114,15 @@ class _JobBoardPageState extends State<JobBoardPage> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   ElevatedButton(
-                                    onPressed: () {
-                                      // You can launch the job link here if needed
+                                    onPressed: () async {
+                                      final url = job.jobLink;
+                                      if (url != null && await canLaunchUrl(Uri.parse(url))) {
+                                        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                                      } else {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text("Could not open the job link")),
+                                        );
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,

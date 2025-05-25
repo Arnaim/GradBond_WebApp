@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginScreen(),  
           '/search': (context) => const FindAlumni(),
           '/signup': (context) => const SignUpPage(), 
-         // '/alumni-signup': (context) => const AlumniSignup(),
           '/event': (context) => EventsPage(),
           '/profile_alumni': (context) => const ProfileAlumni(), 
           '/profile_student': (context) => const ProfileStudent(), 
