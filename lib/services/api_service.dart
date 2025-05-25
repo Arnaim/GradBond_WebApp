@@ -90,7 +90,7 @@ class StorageService {
 
 class AuthService {
   static const String loginUrl = 'https://gradbond.up.railway.app/api/login/';
-  static const String logoutUrl = 'https://gradbond.vercel.app/api/logout/';
+  static const String logoutUrl = 'https://gradbond.up.railway.app/api/logout/';
   static const String signupUrl = 'https://gradbond.up.railway.app/api/signup/';
 
 static Future<bool> login(String email, String password) async {
