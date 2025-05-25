@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/models/job_model.dart';
+import 'package:gradbond/services/api_service.dart';
 import 'bottom_navigation.dart';
 import 'gradient_bg.dart';
+import 'package:intl/intl.dart';
 
 class JobBoardPage extends StatefulWidget {
   const JobBoardPage({super.key});
@@ -10,18 +13,14 @@ class JobBoardPage extends StatefulWidget {
 }
 
 class _JobBoardPageState extends State<JobBoardPage> {
+  late Future<List<Job>> _jobListFuture;
   int currentPage = 1;
 
-  final List<Map<String, String>> jobs = List.generate(
-    6,
-    (index) => {
-      'title': 'Junior Developer',
-      'company': 'Therap BD',
-      'deadline': '5 May, 2025',
-      'salary': '80,000tk',
-      'postedBy': 'Akhilakul Islam',
-    },
-  );
+  @override
+  void initState() {
+    super.initState();
+    _jobListFuture = ApiService.fetchJobs();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,105 +39,127 @@ class _JobBoardPageState extends State<JobBoardPage> {
               ),
               const SizedBox(height: 12),
               Expanded(
-                child: GridView.builder(
-                  itemCount: jobs.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 0.95,
-                  ),
-                  itemBuilder: (context, index) {
-                    final job = jobs[index];
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF3A1D6F), // dark purple
-                        borderRadius: BorderRadius.circular(16),
+                child: FutureBuilder<List<Job>>(
+                  future: _jobListFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No jobs available.'));
+                    }
+
+                    final jobs = snapshot.data!;
+
+                    return GridView.builder(
+                      itemCount: jobs.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 0.95,
                       ),
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            job['title']!,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      itemBuilder: (context, index) {
+                        final job = jobs[index];
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF3A1D6F),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          Text(
-                            job['company']!,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'Deadline: ${job['deadline']}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            'Salary: ${job['salary']}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            'Posted By: ${job['postedBy']}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const Spacer(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.black,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                              Text(
+                                job.title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                child: const Text(
+                              ),
+                              Text(
+                                job.company,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'Deadline: ${DateFormat.yMMMd().format(job.deadline)}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                'Salary: ${job.salary}tk',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                'Type: ${job.jobType}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const Spacer(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // You can launch the job link here if needed
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                    ),
+                                    child: const Text(
                                       'Apply',
-                                      style: TextStyle(color: Color(0xFF3A1D6F), fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                          color: Color(0xFF3A1D6F), fontWeight: FontWeight.bold),
                                     ),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.black,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
                                   ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 25),
-                                ),
-                                child: const Text(
-                                      'Details',
-                                      style: TextStyle(color: Color(0xFF3A1D6F), fontWeight: FontWeight.bold),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // You can show more details here
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(horizontal: 20),
                                     ),
-                              ),
+                                    child: const Text(
+                                      'Details',
+                                      style: TextStyle(
+                                          color: Color(0xFF3A1D6F), fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              )
                             ],
-                          )
-                        ],
-                      ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
               ),
               const SizedBox(height: 10),
+              // Pagination bar stays the same
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -161,10 +182,8 @@ class _JobBoardPageState extends State<JobBoardPage> {
                           });
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              currentPage == pageNumber ? Colors.deepPurple : Colors.white,
-                          foregroundColor:
-                              currentPage == pageNumber ? Colors.white : Colors.black,
+                          backgroundColor: currentPage == pageNumber ? Colors.deepPurple : Colors.white,
+                          foregroundColor: currentPage == pageNumber ? Colors.white : Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
