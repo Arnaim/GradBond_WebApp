@@ -4,11 +4,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:gradbond/models/event_model.dart';
+import 'package:gradbond/models/job_model.dart';
 import 'dart:html' as html; // Only works on web
 
 class ApiService {
-  static const String baseUrl = 'https://gradbond.vercel.app/api';
+  static const String baseUrl = 'https://gradbond.up.railway.app/api/';
 
+  //events api connection
   static Future<List<Event>> fetchEvents() async {
     try {
       print('Fetching events from: $baseUrl/events/');
@@ -32,7 +34,30 @@ class ApiService {
       throw Exception('Failed to fetch events: ${e.toString()}');
     }
   }
+  //jobs api connection
+  static Future<List<Job>> fetchJobs() async {
+    try {
+      final response = await http.get(
+        Uri.parse('${baseUrl}jobs/'),
+        headers: {'Accept': 'application/json'},
+      );
+
+      print('Jobs API Response: ${response.statusCode}');
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 && data['jobs'] is List) {
+        return (data['jobs'] as List)
+            .map((json) => Job.fromJson(json))
+            .toList();
+      } else {
+        throw Exception('Unexpected JSON structure');
+      }
+    } catch (e) {
+      print('Error fetching jobs: $e');
+      throw Exception('Failed to fetch jobs: $e');
+    }
+  }
 }
+
 
 class StorageService {
   static Future<void> saveToken(String token) async {
@@ -64,9 +89,9 @@ class StorageService {
 }
 
 class AuthService {
-  static const String loginUrl = 'https://gradbond.vercel.app/api/login/';
+  static const String loginUrl = 'https://gradbond.up.railway.app/api/login/';
   static const String logoutUrl = 'https://gradbond.vercel.app/api/logout/';
-  static const String signupUrl = 'https://gradbond.vercel.app/api/signup/';
+  static const String signupUrl = 'https://gradbond.up.railway.app/api/signup/';
 
 static Future<bool> login(String email, String password) async {
   try {
