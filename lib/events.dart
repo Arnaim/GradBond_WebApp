@@ -35,7 +35,7 @@ class _EventsPageState extends State<EventsPage> {
   }
 
 Future<List<Map<String, String>>> fetchEvents() async {
-  final response = await http.get(Uri.parse('https://gradbond.vercel.app/api/events/'));
+  final response = await http.get(Uri.parse('https://gradbond.up.railway.app/api/events/'));
 
   if (response.statusCode == 200) {
     final Map<String, dynamic> json = jsonDecode(response.body);
