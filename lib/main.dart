@@ -9,7 +9,9 @@ import 'profile_alumni.dart';
 import 'profile_student.dart';
 import 'jobs.dart';
 
-void main() {
+
+
+void main(){
   runApp(const MyApp());
 }
 
@@ -23,11 +25,11 @@ class MyApp extends StatelessWidget {
       home: const GradBond(),
      routes: {
           '/login': (context) => const LoginScreen(),  
-          '/search': (context) => const FindAlumni(),
+          '/search': (context) =>  FindAlumni(),
           '/signup': (context) => const SignUpPage(), 
           '/event': (context) => EventsPage(),
-          '/profile_alumni': (context) => const ProfileAlumni(), 
-          '/profile_student': (context) => const ProfileStudent(), 
+          //'/profile_alumni': (context) => const AlumniProfilePage(), 
+          //'/profile_student': (context) => const StudentProfilePage(), 
           '/jobs': (context) => const JobBoardPage()
         },
     );
