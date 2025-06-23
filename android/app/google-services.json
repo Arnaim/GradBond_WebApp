@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1005364207216",
+    "project_id": "gradbond-9864b",
+    "storage_bucket": "gradbond-9864b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005364207216:android:ff780b6fe6dd94fda85eb5",
+        "android_client_info": {
+          "package_name": "com.example.temp_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXN2utNO-lxyxaPbXm4xlF6pXKTkUs974"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
