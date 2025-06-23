@@ -1,188 +1,224 @@
 import 'package:flutter/material.dart';
-import 'bottom_navigation.dart'; // Import the bottom navigation bar
 import 'gradient_bg.dart';
+import 'bottom_navigation.dart';
 
-class ProfileAlumni extends StatelessWidget {
-  const ProfileAlumni({super.key});
+class AlumniProfilePage extends StatelessWidget {
+  final Map<String, dynamic> profileData;
+  const AlumniProfilePage({super.key, required this.profileData});
 
   @override
   Widget build(BuildContext context) {
-    return GradientBackground(
-      child: Scaffold(
-      //backgroundColor: const Color(0xFFF4F0FF),
-      bottomNavigationBar: bottomNavigation(context: context),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const CircleAvatar(
-                radius: 40,
-                backgroundImage: AssetImage('assets/profile.png'),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Ai Shaker',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const Text(
-                'Alumni - Dhaka University',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text('Edit Your Profile',
-                    style: TextStyle(color: Colors.white)),
-              ),
-              const SizedBox(height: 20),
-              _infoCard(
-                  'Department', 'Computer Science', 'Graduation Year', '2017'),
-              _infoCard(
-                  'Email', 'amimamu420@gmail.com', 'Phone', '+8801956743629'),
-              _infoCard('Current Job Title', 'Product Manager',
-                  'Graduation Year', '2017'),
-              _infoCard(
-                  'Linkedin Profile',
-                  'https://www.linkedin.com/in/azmain-hasan-daiyan-3b8b0431/',
-                  '',
-                  ''),
-              _sectionCard('About Me',
-                  'Former Software Engineer with a passion for product management and 420. Live and Die for Krishnopur. Don\'t wanna be like Alkas.'),
-              _sectionCard(
-                'Interests & Skills',
-                '',
-                child: Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: const [
-                    _SkillChip('UI/UX'),
-                    _SkillChip('Product Management'),
-                    _SkillChip('Gardening'),
-                    _SkillChip('ReactJS'),
-                    _SkillChip('Distributed Database'),
-                    _SkillChip('Data Structure'),
+    final profile = profileData['profile'] ?? {};
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage()));
+            },
+          ),
+        ],
+      ),
+      body: GradientBackground(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Profile Picture and Name
+                    Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(
+                            profile['profilePicture'] ??
+                                'https://via.placeholder.com/150',
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          profile['name'] ?? 'No Name',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '${profile['department'] ?? ''} Graduate',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    // Profile Info
+                    _buildProfileSection('Department', profile['department'] ?? ''),
+                    _buildProfileSection('Graduation Year', profile['graduationYear']?.toString() ?? ''),
+                    _buildProfileSection('Email', profile['email'] ?? ''),
+                    _buildProfileSection('Student ID', profile['studentId'] ?? ''),
+                    _buildProfileSection('Current Job Title', profile['jobTitle'] ?? ''),
+                    _buildProfileSection('Company', profile['company'] ?? ''),
+                    _buildProfileSection('LinkedIn Profile', profile['linkedin'] ?? ''),
+
+                    // About Me - placeholder for now
+                    _buildLargeProfileSection(
+                      'About Me',
+                      'Experienced professional in the tech industry who loves innovation and problem-solving.',
+                    ),
+
+                    // Interests & Skills - placeholder
+                    _buildLargeProfileSection(
+                      'Interests & Skills',
+                      'Flutter, Dart, Firebase, Backend Systems, Project Management',
+                    ),
+
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: _actionButton('Create an Event'),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _actionButton('View Your Events'),
+            ),
+
+            // Bottom Buttons for alumni
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 3,
+                    offset: const Offset(0, -1),
                   ),
                 ],
-              )
-            ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildPurpleButton('Create an Event', Icons.add),
+                  _buildPurpleButton('Create a Job', Icons.work),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: bottomNavigation(context: context),
+    );
+  }
+
+  Widget _buildProfileSection(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-      ),
-      ),
-    );
-  }
-
-  static Widget _infoCard(
-      String label1, String value1, String label2, String value2) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('$label1: $value1', style: const TextStyle(fontSize: 16)),
-          if (label2.isNotEmpty)
-            Text('$label2: $value2', style: const TextStyle(fontSize: 16))
-        ],
-      ),
-    );
-  }
-
-  static Widget _sectionCard(String title, String content, {Widget? child}) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          child ?? Text(content, style: const TextStyle(fontSize: 16)),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  static Widget _actionButton(String title) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepPurple,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      child: Text(
-        title,
-        style: const TextStyle(color: Colors.white),
+  Widget _buildLargeProfileSection(String title, String content) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Text(
+              content,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
       ),
     );
   }
-}
 
-class _SkillChip extends StatelessWidget {
-  final String label;
-  const _SkillChip(this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(20),
+  Widget _buildPurpleButton(String text, IconData icon) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF3A1D6F),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
       ),
-      child: Text(
-        label,
-        style:
-            const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+      onPressed: () {
+        // Add button functionality here
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: const TextStyle(color: Colors.white),
+          ),
+        ],
       ),
     );
   }
