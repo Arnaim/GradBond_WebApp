@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gradbond/services/api_service.dart'; 
+import 'profile_alumni.dart';
+import 'profile_student.dart';
+import 'services/api_service.dart';
 
 class bottomNavigation extends StatelessWidget{
   final BuildContext context;
@@ -39,7 +42,7 @@ class bottomNavigation extends StatelessWidget{
           icon: Icons.person,
           label: "You",
           onPressed: () {
-            _showUserTypeDialog(context);
+            _navigateToProfile(context);
           },
         ),
       ],
@@ -95,31 +98,23 @@ void _showLogoutDialog(BuildContext context) {
   }
 
 
-void _showUserTypeDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Select User Type"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            title: const Text("Alumni"),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, "/profile_alumni");
-            },
-          ),
-          ListTile(
-            title: const Text("Student"),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(
-                  context, "/profile_student"); // Added student navigation
-            },
-          ),
-        ],
+void _navigateToProfile(BuildContext context) async {
+  final profileData = await ApiService.fetchMyProfile();
+
+  if (profileData != null && profileData['profile'] != null) {
+    final userType = profileData['profile']['userType'];
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => userType == 'student'
+            ? StudentProfilePage(profileData: profileData)
+            : AlumniProfilePage(profileData: profileData),
       ),
-    ),
-  );
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Failed to load profile.')),
+    );
+  }
 }
