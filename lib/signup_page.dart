@@ -152,7 +152,7 @@ class _SignUpPageState extends State<SignUpPage> {
                  onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           print('Attempting signup with:');
-                          print('UserType: ${selectedUserType}');
+                          print('UserType: $selectedUserType');
                           print('Email: ${_emailController.text.trim()}');
                           print('Password: ${_passwordController.text}');
 
