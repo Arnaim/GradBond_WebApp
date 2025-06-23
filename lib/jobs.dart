@@ -116,7 +116,7 @@ class _JobBoardPageState extends State<JobBoardPage> {
                                   ElevatedButton(
                                     onPressed: () async {
                                       final url = job.jobLink;
-                                      if (url != null && await canLaunchUrl(Uri.parse(url))) {
+                                      if (await canLaunchUrl(Uri.parse(url))) {
                                         await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
                                       } else {
                                         ScaffoldMessenger.of(context).showSnackBar(
