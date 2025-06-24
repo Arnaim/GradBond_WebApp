@@ -6,36 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:gradbond/models/event_model.dart';
 import 'package:gradbond/models/job_model.dart';
 import 'package:gradbond/models/alumni_model.dart';
-import 'dart:html' as html; // Only for web
+import 'package:gradbond/services/storage/storage_service.dart';
 
-class StorageService {
-  static Future<void> saveToken(String token) async {
-    if (kIsWeb) {
-      html.window.localStorage['auth_token'] = token;
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('auth_token', token);
-    }
-  }
-
-  static Future<String?> getToken() async {
-    if (kIsWeb) {
-      return html.window.localStorage['auth_token'];
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString('auth_token');
-    }
-  }
-
-  static Future<void> clearToken() async {
-    if (kIsWeb) {
-      html.window.localStorage.remove('auth_token');
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('auth_token');
-    }
-  }
-}
 
 class ApiService {
   static const String baseUrl = 'https://gradbond.up.railway.app/api/';
