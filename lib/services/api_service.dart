@@ -40,6 +40,39 @@ class StorageService {
 class ApiService {
   static const String baseUrl = 'https://gradbond.up.railway.app/api/';
 
+  //find alumni
+   static Future<List<Alumni>> findAlumni({
+    String? university,
+    String? department,
+    String? company,
+    String? jobTitle,
+  }) async {
+    try {
+      final uri = Uri.parse('${baseUrl}find-alumni/').replace(queryParameters: {
+        'university': university ?? '',
+        'department': department ?? '',
+        'company': company ?? '',
+        'job_title': jobTitle ?? '',
+      });
+
+      final response = await http.get(uri, headers: {
+        'Accept': 'application/json',
+      });
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<dynamic> alumniJson = data['alumni'];
+        return alumniJson.map((json) => Alumni.fromJson(json)).toList();
+      } else {
+        throw Exception('Error ${response.statusCode}: ${response.body}');
+      }
+    } catch (e) {
+      print("Error in findAlumni: $e");
+      rethrow;
+    }
+  }
+
+  //Profile
   static Future<Map<String, dynamic>?> fetchMyProfile() async {
   final token = await StorageService.getToken();
   print("🔑 Token: $token");

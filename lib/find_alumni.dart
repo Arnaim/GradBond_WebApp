@@ -50,6 +50,8 @@ class _SearchFormState extends State<SearchForm> {
 
   bool _isLoading = false;
 
+  //find alumni function using api
+
   void _findAlumni() async {
   setState(() => _isLoading = true);
 
@@ -57,7 +59,6 @@ class _SearchFormState extends State<SearchForm> {
     final token = await StorageService.getToken();
 
     if (token == null) {
-      // User is not logged in or token missing
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('You must be logged in to search')),
       );
@@ -65,13 +66,25 @@ class _SearchFormState extends State<SearchForm> {
       return;
     }
 
-    
-  //  Navigator.push(
-   //   context,
-     // MaterialPageRoute(
-        //builder: (context) => AlumniListPage(alumniList: a),
-    //  ),
-  //  );
+    final alumniList = await ApiService.findAlumni(
+      university: _universityController.text.trim(),
+      department: _departmentController.text.trim(),
+      company: _companyController.text.trim(),
+      jobTitle: _jobTitleController.text.trim(),
+    );
+
+    if (alumniList.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No alumni found')),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AlumniListPage(alumniList: alumniList),
+        ),
+      );
+    }
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Failed to fetch alumni: $e')),
@@ -80,6 +93,7 @@ class _SearchFormState extends State<SearchForm> {
     setState(() => _isLoading = false);
   }
 }
+
 
 
   @override
