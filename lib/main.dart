@@ -5,8 +5,6 @@ import 'login.dart';
 //import 'alumni_signup.dart';
 import 'signup_page.dart';
 import 'events.dart';
-import 'profile_alumni.dart';
-import 'profile_student.dart';
 import 'jobs.dart';
 
 
