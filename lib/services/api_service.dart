@@ -50,23 +50,19 @@ class ApiService {
   if (token == null) return null;
 
   try {
-    final request = http.Request('GET', Uri.parse('${baseUrl}profile/'));
-
-    // ✅ Send token as a cookie instead of Authorization header
-    request.headers.addAll({
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'cookie': 'auth_token=$token',
-    });
-
-    final response = await request.send();
-    final responseBody = await response.stream.bytesToString();
+    final response = await http.get(
+      Uri.parse('${baseUrl}profile/'),
+      headers: {
+        'Authorization': 'Bearer $token', // ✅ NOW ALLOWED BY BACKEND
+        'Accept': 'application/json',
+      },
+    );
 
     print('📡 Profile API Response Code: ${response.statusCode}');
-    print('📦 Profile API Body: $responseBody');
+    print('📦 Profile API Body: ${response.body}');
 
     if (response.statusCode == 200) {
-      return jsonDecode(responseBody);
+      return jsonDecode(response.body);
     } else {
       return null;
     }
@@ -75,6 +71,7 @@ class ApiService {
     return null;
   }
 }
+
 
   // Events API (GET)
   static Future<List<Event>> fetchEvents() async {

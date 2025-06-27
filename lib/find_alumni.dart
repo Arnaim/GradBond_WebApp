@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gradbond/gradient_bg.dart';
 import 'bottom_navigation.dart';
 import 'alumni_list.dart';
 // Import Alumni model
@@ -12,7 +11,17 @@ class FindAlumni extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GradientBackground(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFE3DAFF), // Light purple
+              Color(0xFFE8E5E5), // Light grayish white
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

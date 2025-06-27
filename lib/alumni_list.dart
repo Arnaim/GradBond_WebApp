@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 import 'bottom_navigation.dart';
 import 'package:gradbond/models/alumni_model.dart';
+import 'gradient_bg.dart';
 
 class AlumniCard extends StatelessWidget {
   final Alumni alumniData;
 
   const AlumniCard({super.key, required this.alumniData});
+
+  @override
+  Widget build(BuildContext context) {
+    return GradientBackground(alumniData: alumniData);
+  }
+}
+
+class GradientBackground extends StatelessWidget {
+  const GradientBackground({
+    super.key,
+    required this.alumniData,
+  });
+
+  final Alumni alumniData;
 
   @override
   Widget build(BuildContext context) {

@@ -33,9 +33,9 @@ class HomePage extends StatelessWidget {
                   children: [
                     _buildActionButton(context,"Search For Alumni", Icons.search, "/search"),
                     const SizedBox(height: 16),
-                    _buildActionButton(context, "Browse Events", Icons.event ,"/search"),
+                    _buildActionButton(context, "Browse Events", Icons.event ,"/event"),
                     const SizedBox(height: 16),
-                    _buildActionButton(context, "Go To Profile", Icons.person, "/search"),
+                    _buildActionButton(context, "Go To Jobs", Icons.work, "/jobs"),
                   ],
                 ),
                 const SizedBox(height: 20),
