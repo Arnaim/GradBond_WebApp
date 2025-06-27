@@ -48,23 +48,30 @@ class bottomNavigation extends StatelessWidget{
     );
   }
 
-Widget _buildNavItem({required IconData icon, required String label, required VoidCallback onPressed}) {
-    return TextButton(
-      onPressed: onPressed,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Colors.black),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.black),
+  Widget _buildNavItem({
+        required IconData icon,
+        required String label,
+        required VoidCallback onPressed,
+        }
+       ) 
+      {
+        const navColor = Color.fromRGBO(58, 29, 111, 1); 
+        return TextButton(
+          onPressed: onPressed,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: navColor),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: const TextStyle(color: navColor),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-}
+        );
+      }
+    }
 
 void _showLogoutDialog(BuildContext context) {
     showDialog(

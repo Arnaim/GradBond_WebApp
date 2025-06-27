@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'bottom_navigation.dart';
 import 'package:gradbond/models/alumni_model.dart';
+import 'publicAlumniProfilePage .dart';
 import 'gradient_bg.dart';
 
 class AlumniCard extends StatelessWidget {
@@ -31,49 +32,42 @@ class GradientBackground extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
-        child: Stack(
+        child: Column(
           children: [
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: 100,
-              child: Container(color: const Color(0xFF72428A)),
-            ),
-            Positioned(
-              top: 90,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(color: Colors.white),
-            ),
-            Positioned(
-              top: 50,
-              left: 0,
-              right: 0,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundImage: NetworkImage(
-                    alumniData.profilePicture?.isNotEmpty == true
-                        ? alumniData.profilePicture!
-                        : 'https://placehold.co/100x100/A020F0/ffffff?text=NP',
-                  ),
-                  backgroundColor: Colors.white,
+            // Top banner + profile image (stacked)
+            Stack(
+              children: [
+                Container(
+                  height: 100,
+                  width: double.infinity,
+                  color: const Color(0xFF72428A),
                 ),
-              ),
+                Positioned(
+                  top: 10,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: CircleAvatar(
+                      radius: 40,
+                      backgroundImage: NetworkImage(
+                        alumniData.profilePicture?.isNotEmpty == true
+                            ? alumniData.profilePicture!
+                            : 'https://placehold.co/100x100/A020F0/ffffff?text=NP',
+                      ),
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Positioned(
-              top: 140,
-              left: 0,
-              right: 0,
-              bottom: 0,
+
+            // Info section (expands as needed)
+            Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       alumniData.name,
@@ -105,7 +99,7 @@ class GradientBackground extends StatelessWidget {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Text(
                       '${alumniData.university}\n${alumniData.department}',
                       style: const TextStyle(
@@ -115,39 +109,35 @@ class GradientBackground extends StatelessWidget {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => print('Follow: ${alumniData.name}'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            minimumSize: const Size(80, 30),
-                          ),
-                          child: const Text('Follow', style: TextStyle(fontFamily: 'Inter', fontSize: 12)),
-                        ),
-                        OutlinedButton(
-                          onPressed: () => print('Message: ${alumniData.name}'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.deepPurple,
-                            side: const BorderSide(color: Colors.deepPurple, width: 1.2),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            minimumSize: const Size(80, 30),
-                          ),
-                          child: const Text('Message', style: TextStyle(fontFamily: 'Inter', fontSize: 12)),
-                        ),
-                      ],
-                    )
                   ],
+                ),
+              ),
+            ),
+
+            // Buttons at bottom
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PublicAlumniProfilePage(alumni: alumniData),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  minimumSize: const Size(100, 32),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                child: const Text(
+                  'About Me',
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 12),
                 ),
               ),
             ),
@@ -157,6 +147,7 @@ class GradientBackground extends StatelessWidget {
     );
   }
 }
+
 
 class AlumniListPage extends StatefulWidget {
   final List<Alumni> alumniList;
@@ -180,50 +171,60 @@ class _AlumniListPageState extends State<AlumniListPage> {
   int get _totalPages => (widget.alumniList.length / _itemsPerPage).ceil();
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(onPressed: () => Navigator.of(context).pop()),
-        title: const Text(
-          'Alumni List',
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+Widget build(BuildContext context) {
+  return Scaffold(
+    extendBodyBehindAppBar: true,
+    appBar: AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: BackButton(onPressed: () => Navigator.of(context).pop()),
+      title: const Text(
+        'Alumni List',
+        style: TextStyle(
+          fontFamily: 'Inter',
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
         ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 1,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: widget.alumniList.isEmpty
-                ? const Center(child: Text('No alumni found.'))
-                : GridView.builder(
-                    padding: const EdgeInsets.all(16),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.6,
-                    ),
-                    itemCount: _pagedAlumni.length,
-                    itemBuilder: (context, index) {
-                      return AlumniCard(alumniData: _pagedAlumni[index]);
-                    },
+      centerTitle: true,
+    ),
+    
+    body: Column(
+      children: [
+        const SizedBox(height: 30),
+        // Expanded handles the grid so it scrolls instead of overflows
+        Expanded(
+          child: widget.alumniList.isEmpty
+              ? const Center(child: Text('No alumni found.'))
+              : GridView.builder(
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 0.6,
                   ),
-          ),
-          if (_totalPages > 1)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+                  itemCount: _pagedAlumni.length,
+                  itemBuilder: (context, index) {
+                    return AlumniCard(alumniData: _pagedAlumni[index]);
+                  },
+                ),
+        ),
+
+        // Pagination stays at bottom, scrolls off-screen naturally
+        if (_totalPages > 1)
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios, size: 20),
-                    onPressed: _currentPage > 1 ? () => setState(() => _currentPage--) : null,
+                    onPressed: _currentPage > 1
+                        ? () => setState(() => _currentPage--)
+                        : null,
                   ),
                   ...List.generate(_totalPages, (index) {
                     final page = index + 1;
@@ -240,7 +241,9 @@ class _AlumniListPageState extends State<AlumniListPage> {
                             color: isSelected ? Colors.deepPurple : Colors.white,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: isSelected ? Colors.deepPurple : Colors.grey.shade400,
+                              color: isSelected
+                                  ? Colors.deepPurple
+                                  : Colors.grey.shade400,
                               width: 1,
                             ),
                           ),
@@ -258,14 +261,17 @@ class _AlumniListPageState extends State<AlumniListPage> {
                   }),
                   IconButton(
                     icon: const Icon(Icons.arrow_forward_ios, size: 20),
-                    onPressed: _currentPage < _totalPages ? () => setState(() => _currentPage++) : null,
+                    onPressed: _currentPage < _totalPages
+                        ? () => setState(() => _currentPage++)
+                        : null,
                   ),
                 ],
               ),
             ),
-        ],
-      ),
-      bottomNavigationBar: bottomNavigation(context: context),
-    );
-  }
+          ),
+      ],
+    ),
+    bottomNavigationBar: bottomNavigation(context: context),
+  );
+ }
 }

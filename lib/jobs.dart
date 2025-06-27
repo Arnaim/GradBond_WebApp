@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/home.dart';
 import 'package:gradbond/models/job_model.dart';
 import 'package:gradbond/services/api_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,6 +27,20 @@ class _JobBoardPageState extends State<JobBoardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
+      ),
       body: GradientBackground(
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -168,49 +183,53 @@ class _JobBoardPageState extends State<JobBoardPage> {
               ),
               const SizedBox(height: 10),
               // Pagination bar stays the same
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios),
-                    onPressed: () {
-                      setState(() {
-                        if (currentPage > 1) currentPage--;
-                      });
-                    },
-                  ),
-                  ...List.generate(5, (index) {
-                    final pageNumber = index + 1;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            currentPage = pageNumber;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: currentPage == pageNumber ? Colors.deepPurple : Colors.white,
-                          foregroundColor: currentPage == pageNumber ? Colors.white : Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                        ),
-                        child: Text('$pageNumber'),
-                      ),
-                    );
-                  }),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_forward_ios),
-                    onPressed: () {
-                      setState(() {
-                        currentPage++;
-                      });
-                    },
-                  ),
-                ],
-              )
+SingleChildScrollView(
+  scrollDirection: Axis.horizontal,
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      IconButton(
+        icon: const Icon(Icons.arrow_back_ios),
+        onPressed: () {
+          setState(() {
+            if (currentPage > 1) currentPage--;
+          });
+        },
+      ),
+      ...List.generate(5, (index) {
+        final pageNumber = index + 1;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: ElevatedButton(
+            onPressed: () {
+              setState(() {
+                currentPage = pageNumber;
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: currentPage == pageNumber ? Colors.deepPurple : Colors.white,
+              foregroundColor: currentPage == pageNumber ? Colors.white : Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            ),
+            child: Text('$pageNumber'),
+          ),
+        );
+      }),
+      IconButton(
+        icon: const Icon(Icons.arrow_forward_ios),
+        onPressed: () {
+          setState(() {
+            currentPage++;
+          });
+        },
+      ),
+    ],
+  ),
+),
+
             ],
           ),
         ),

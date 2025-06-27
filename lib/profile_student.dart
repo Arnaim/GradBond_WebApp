@@ -12,7 +12,10 @@ class StudentProfilePage extends StatelessWidget {
     final events = profileData['my_events'] as List<dynamic>? ?? [];
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text('Profile'),
         centerTitle: true,
         actions: [

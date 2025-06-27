@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gradbond/find_alumni.dart';
+import 'package:gradbond/home.dart';
 import 'login.dart'; 
 //import 'student_signup.dart'; 
 //import 'alumni_signup.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: const GradBond(),
      routes: {
+          '/home': (context) => HomePage(),
           '/login': (context) => const LoginScreen(),  
           '/search': (context) =>  FindAlumni(),
           '/signup': (context) => const SignUpPage(), 

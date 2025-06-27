@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/home.dart';
 import 'bottom_navigation.dart';
 import 'alumni_list.dart';
-// Import Alumni model
 import '/services/api_service.dart';
 import 'package:gradbond/services/storage/storage_service.dart';
 
@@ -11,6 +11,20 @@ class FindAlumni extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

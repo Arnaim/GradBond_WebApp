@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/home.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'gradient_bg.dart';
 import 'bottom_navigation.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
@@ -34,101 +36,118 @@ class _EventsPageState extends State<EventsPage> {
     super.dispose();
   }
 
-Future<List<Map<String, String>>> fetchEvents() async {
-  final response = await http.get(Uri.parse('https://gradbond.up.railway.app/api/events/'));
+  Future<List<Map<String, String>>> fetchEvents() async {
+    final response = await http.get(Uri.parse('https://gradbond.up.railway.app/api/events/'));
 
-  if (response.statusCode == 200) {
-    final Map<String, dynamic> json = jsonDecode(response.body);
-    final List<dynamic> events = json['events'];
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      final List<dynamic> events = json['events'];
 
-    return events.map<Map<String, String>>((event) => {
-      "title": event['name'] ?? "No Title", // Use correct key: 'name' not 'title'
-      "date": event['date'] ?? DateTime.now().toIso8601String(),
-      "time": event['time'] ?? "00:00",
-      "image": event['image_url'] ?? "assets/images/event_card_placeholder1.png",
-      "createdBy": event['created_by'] ?? "Unknown",
-    }).toList();
-  } else {
-    throw Exception('Failed to load events');
+      return events.map<Map<String, String>>((event) => {
+        "title": event['name'] ?? "No Title",
+        "date": event['date'] ?? DateTime.now().toIso8601String(),
+        "time": event['time'] ?? "00:00",
+        "image": event['image_url'] ?? "assets/images/event_card_placeholder1.png",
+        "createdBy": event['created_by'] ?? "Unknown",
+        "registrationLink": event['registration_link'] ?? "",
+      }).toList();
+    } else {
+      throw Exception('Failed to load events');
+    }
   }
-}
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: const Color.fromARGB(255, 242, 238, 255),
-    body: GradientBackground(
-      child: SafeArea(
-        child: FutureBuilder<List<Map<String, String>>>(
-          future: _eventsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text("Error: ${snapshot.error}"));
-            }
-
-            final events = snapshot.data!;
-            return Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'Recent Events/Workshops',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 0.65,
-                        ),
-                        itemCount: events.length,
-                        itemBuilder: (context, index) {
-                          final event = events[index];
-                          final parsedDate = DateTime.tryParse(event['date']!);
-                          return EventCard(
-                            title: event['title']!,
-                            imagePath: event['image']!,
-                            dateTime: parsedDate ?? DateTime.now(),
-                            createdBy: event['createdBy']!,
-                            time: event['time']!,
-                          );
-                        },
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      
+      backgroundColor: const Color.fromARGB(255, 242, 238, 255),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: Text(
+                      'Recent Events/Workshops',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                PaginationSection(
-                  currentPage: _currentPage,
-                  totalPages: _totalPages,
-                  onPageChanged: (page) {
-                    setState(() => _currentPage = page);
-                  },
-                ),
-                const SizedBox(height: 10),
-              ],
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
             );
           },
         ),
       ),
-    ),
-    bottomNavigationBar: bottomNavigation(context: context),
-  );
- }
+      body: GradientBackground(
+        child: SafeArea(
+          child: FutureBuilder<List<Map<String, String>>>(
+            future: _eventsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text("Error: ${snapshot.error}"));
+              }
+
+              final events = snapshot.data!;
+              return Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: 0.65,
+                          ),
+                          itemCount: events.length,
+                          itemBuilder: (context, index) {
+                            final event = events[index];
+                            final parsedDate = DateTime.tryParse(event['date']!);
+                            return EventCard(
+                              title: event['title']!,
+                              imagePath: event['image']!,
+                              dateTime: parsedDate ?? DateTime.now(),
+                              createdBy: event['createdBy']!,
+                              time: event['time']!,
+                              registrationLink: event['registrationLink'] ?? '',
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  PaginationSection(
+                    currentPage: _currentPage,
+                    totalPages: _totalPages,
+                    onPageChanged: (page) {
+                      setState(() => _currentPage = page);
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+      bottomNavigationBar: bottomNavigation(context: context),
+    );
+  }
 }
 
 class EventCard extends StatefulWidget {
@@ -136,7 +155,8 @@ class EventCard extends StatefulWidget {
   final DateTime dateTime;
   final String imagePath;
   final String createdBy;
-  final String time; // New
+  final String time;
+  final String registrationLink;
 
   const EventCard({
     super.key,
@@ -145,6 +165,7 @@ class EventCard extends StatefulWidget {
     required this.imagePath,
     required this.createdBy,
     required this.time,
+    required this.registrationLink,
   });
 
   @override
@@ -195,8 +216,8 @@ class _EventCardState extends State<EventCard> {
 
   @override
   Widget build(BuildContext context) {
-    final formattedDate = DateFormat('MMMM d, y').format(widget.dateTime); // e.g., May 15, 2025
-    final formattedTime = DateFormat('hh:mm a').format(widget.dateTime);   // e.g., 02:53 AM
+    final formattedDate = DateFormat('MMMM d, y').format(widget.dateTime);
+    final formattedTime = DateFormat('hh:mm a').format(widget.dateTime);
     return Card(
       elevation: 4,
       color: const Color.fromRGBO(58, 29, 111, 1),
@@ -207,45 +228,39 @@ class _EventCardState extends State<EventCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image
             AspectRatio(
-              aspectRatio: 16 / 9,
+              aspectRatio: 16 / 10,
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Image.network(
-                widget.imagePath,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: Color.fromARGB(255, 245, 231, 231),
-                  child: Center(child: Icon(Icons.broken_image, size: 40)),
+                  widget.imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: Color.fromARGB(255, 245, 231, 231),
+                    child: Center(child: Icon(Icons.broken_image, size: 40)),
+                  ),
                 ),
               ),
-              ),
             ),
-            // Title
             Padding(
               padding: const EdgeInsets.all(12),
-              child: Text(
-                widget.title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            // Countdown
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
+                    widget.title,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
                     "Created By: ${widget.createdBy}",
-                    style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold ),
+                    style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     "$formattedDate | $formattedTime",
@@ -254,59 +269,49 @@ class _EventCardState extends State<EventCard> {
                 ],
               ),
             ),
-        const SizedBox(height: 8),
-            const SizedBox(height: 8),
-            // Buttons
+            const Spacer(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+              padding: const EdgeInsets.fromLTRB(6, 8, 6, 16),
               child: Row(
                 children: [
                   Expanded(
                     child: TextButton(
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.1),
-                          minimumSize: const Size(0, 36), 
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        onPressed: () {},
-                        child: Text(
-                          _eventEnded ? "Recap" : "Register",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.5, // go even smaller if needed
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      )
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextButton(
                       style: TextButton.styleFrom(
-                        minimumSize: const Size(90, 36), // 🔥 Add width (90 is usually safe)
+                        backgroundColor: Colors.white.withOpacity(0.1),
+                        minimumSize: const Size(0, 36), 
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: Colors.white.withOpacity(0.1),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: () {},
-                      child: const Text(
-                        "See more",
-                        style: TextStyle(
+                     onPressed: () async {
+                        final url = widget.registrationLink;
+                        if (url.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("No registration link provided")),
+                          );
+                          return;
+                        }
+                        final uri = Uri.tryParse(url);
+                        if (uri != null && await canLaunchUrl(uri)) {
+                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Could not open the registration link")),
+                          );
+                        }
+                      },
+                      child: Text(
+                        _eventEnded ? "Recap" : "Register",
+                        style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 11,
+                          fontSize: 10.5,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.5,
                         ),
                       ),
-                    )
+                    ),
                   ),
                 ],
               ),
@@ -317,7 +322,6 @@ class _EventCardState extends State<EventCard> {
     );
   }
 }
-
 
 class PaginationSection extends StatelessWidget {
   final int currentPage;

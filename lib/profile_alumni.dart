@@ -11,7 +11,10 @@ class AlumniProfilePage extends StatelessWidget {
     final profile = profileData['profile'] ?? {};
 
     return Scaffold(
-      appBar: AppBar(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(   
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text('Profile'),
         centerTitle: true,
         actions: [
