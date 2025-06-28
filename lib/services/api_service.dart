@@ -42,6 +42,31 @@ class ApiService {
     }
   }
 
+  //home page showcase
+    static Future<List<Alumni>> fetchAlumniForHome() async {
+      final uri = Uri.parse('${baseUrl}find-alumni/').replace(queryParameters: {
+        'university': 'BUBT', // 👈 Use a dummy valid query field
+      });
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json',
+        },
+      );
+
+      print('📡 Alumni Fetch Response: ${response.statusCode}');
+      print('📦 Alumni Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<dynamic> alumniList = data['alumni'];
+        return alumniList.map((json) => Alumni.fromJson(json)).toList();
+      } else {
+        throw Exception("Alumni fetch failed: ${response.body}");
+      }
+    }
+
   //Profile
   static Future<Map<String, dynamic>?> fetchMyProfile() async {
   final token = await StorageService.getToken();
@@ -53,7 +78,7 @@ class ApiService {
     final response = await http.get(
       Uri.parse('${baseUrl}profile/'),
       headers: {
-        'Authorization': 'Bearer $token', // ✅ NOW ALLOWED BY BACKEND
+        'Authorization': 'Bearer $token', 
         'Accept': 'application/json',
       },
     );
@@ -74,30 +99,29 @@ class ApiService {
 
 
   // Events API (GET)
-  static Future<List<Event>> fetchEvents() async {
-    try {
-      print('Fetching events from: $baseUrl/events/');
-      final response = await http.get(
-        Uri.parse('$baseUrl/events/'),
-        headers: {'Accept': 'application/json'},
-      );
+static Future<List<Event>> fetchEvents() async {
+  final response = await http.get(Uri.parse('$baseUrl/events/'));
 
-      print('API Response Status: ${response.statusCode}');
-      print('API Response Body: ${response.body}');
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> data = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final List<dynamic> eventsJson = data['events'] as List;
-        return eventsJson.map((json) => Event.fromJson(json)).toList();
-      } else {
-        throw Exception("HTTP ${response.statusCode}: ${response.body}");
-      }
-    } catch (e) {
-      print('Error in fetchEvents: $e');
-      throw Exception('Failed to fetch events: ${e.toString()}');
+    if (data['status'] != 200) {
+      throw Exception('API returned status ${data['status']}');
     }
-  }
 
+    final List<dynamic> eventsJson = data['events'];
+    final events = eventsJson.map((json) => Event.fromJson(json)).toList();
+
+    print("DEBUG: Fetched ${events.length} events");
+    for (var e in events) {
+      print("DEBUG Event: ${e.name}, ${e.date}, ${e.imageUrl}");
+    }
+
+    return events;
+  } else {
+    throw Exception('HTTP error: ${response.statusCode}');
+  }
+}
   // Jobs API (GET)
   static Future<List<Job>> fetchJobs() async {
     try {
@@ -127,6 +151,7 @@ class AuthService {
   static const String logoutUrl = 'https://gradbond.up.railway.app/api/logout/';
   static const String signupUrl = 'https://gradbond.up.railway.app/api/signup/';
 
+  //login
   static Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -171,21 +196,8 @@ class AuthService {
       final token = await StorageService.getToken();
 
       if (token == null) {
-        return true; // Already logged out
+        return true;
       }
-
-      // Optional: Call backend logout if needed
-      /*
-      final response = await http.get(
-        Uri.parse(logoutUrl),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Accept': 'application/json',
-        },
-      );
-      print('Logout Response: ${response.statusCode} - ${response.body}');
-      */
-
       await StorageService.clearToken();
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -199,6 +211,7 @@ class AuthService {
     }
   }
 
+  //signup
   static Future<bool> signup(String userType, String email, String password) async {
     try {
       print('Sending userType: $userType');
