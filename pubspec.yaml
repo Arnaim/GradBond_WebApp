@@ -46,6 +46,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
     
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -71,18 +72,23 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
-  assets:
-    - assets/images/logo.png   
-    - assets/images/landingPage.png
-    - assets/images/facebook.png
-    - assets/images/linkedin.png
-    - assets/images/x.png
-    - assets/images/event_card_placeholder1.png
-    - assets/images/event_card_placeholder2.png
-    - assets/images/event_card_placeholder3.png
-    - assets/images/event_card_placeholder4.png
-    - assets/images/event_card_placeholder5.png
-    - assets/images/event_card_placeholder6.png
+  # assets:
+  #   - assets/images/logo.png   
+  #   - assets/images/landingPage.png
+  #   - assets/images/facebook.png
+  #   - assets/images/linkedin.png
+  #   - assets/images/x.png
+  #   - assets/images/event_card_placeholder1.png
+  #   - assets/images/event_card_placeholder2.png
+  #   - assets/images/event_card_placeholder3.png
+  #   - assets/images/event_card_placeholder4.png
+  #   - assets/images/event_card_placeholder5.png
+  #   - assets/images/event_card_placeholder6.png
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "lib/assets/GradBond_Logo.png" 
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
