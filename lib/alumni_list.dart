@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'bottom_navigation.dart';
 import 'package:gradbond/models/alumni_model.dart';
 import 'publicAlumniProfilePage .dart';
-import 'gradient_bg.dart';
 
 class AlumniCard extends StatelessWidget {
   final Alumni alumniData;
