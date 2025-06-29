@@ -50,5 +50,5 @@ A Flutter-based web application that connects students with alumni through a spe
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/gradbond.git
+   git clone https://github.com/Arnaim/GradBond_WebApp.git
    cd gradbond
