@@ -43,7 +43,7 @@ A Flutter-based web application that connects students with alumni through a spe
 
 - Flutter SDK (latest stable version)
 - Dart SDK
-- Firebase account (for backend services)
+- Django (for backend services)
 - IDE (VS Code or Android Studio recommended)
 
 ### Installation
