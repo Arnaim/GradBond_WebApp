@@ -43,12 +43,12 @@ A Flutter-based web application that connects students with alumni through a spe
 
 - Flutter SDK (latest stable version)
 - Dart SDK
-- Firebase account (for backend services)
+- Django (for backend services)
 - IDE (VS Code or Android Studio recommended)
 
 ### Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/gradbond.git
+   git clone https://github.com/Arnaim/GradBond_WebApp.git
    cd gradbond
