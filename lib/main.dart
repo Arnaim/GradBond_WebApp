@@ -33,8 +33,6 @@ class MyApp extends StatelessWidget {
           '/search': (context) =>  FindAlumni(),
           '/signup': (context) => const SignUpPage(), 
           '/event': (context) => EventsPage(),
-          //'/profile_alumni': (context) => const AlumniProfilePage(), 
-          //'/profile_student': (context) => const StudentProfilePage(), 
           '/jobs': (context) => const JobBoardPage()
         },
     );

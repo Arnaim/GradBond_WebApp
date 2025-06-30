@@ -80,7 +80,7 @@ class _SearchFormState extends State<SearchForm> {
 
   //find alumni function using api
 
-  void _findAlumni() async {
+  Future<void> _findAlumni()  async {
   setState(() => _isLoading = true);
 
   try {
