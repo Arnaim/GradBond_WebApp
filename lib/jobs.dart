@@ -29,6 +29,13 @@ class _JobBoardPageState extends State<JobBoardPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        title: Text(
+                'Job Board',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -46,14 +53,6 @@ class _JobBoardPageState extends State<JobBoardPage> {
           padding: const EdgeInsets.fromLTRB(16, kToolbarHeight + 24, 16, 16),
           child: Column(
             children: [
-              const Text(
-                'Job Board',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
               Expanded(
                 child: FutureBuilder<List<Job>>(
                   future: _jobListFuture,
@@ -74,7 +73,7 @@ class _JobBoardPageState extends State<JobBoardPage> {
                         crossAxisCount: 2,
                         mainAxisSpacing: 12,
                         crossAxisSpacing: 12,
-                        childAspectRatio: 0.95,
+                        childAspectRatio: 0.75,
                       ),
                       itemBuilder: (context, index) {
                         final job = jobs[index];
