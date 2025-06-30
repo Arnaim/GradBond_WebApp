@@ -80,6 +80,7 @@ flutter:
   assets:
     - assets/images/logo.png   
     - assets/images/landingPage.png
+    - assets\images\GradBond_Logo.png
   #   - assets/images/facebook.png
   #   - assets/images/linkedin.png
   #   - assets/images/x.png

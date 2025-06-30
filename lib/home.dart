@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/app_logo.dart';
 import 'bottom_navigation.dart';
 import 'package:gradbond/gradient_bg.dart';
 import 'package:gradbond/models/alumni_model.dart';
@@ -45,21 +46,21 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+            "Welcome back to Gradbond",
+             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+        actions: const [
+          AppLogo(size: 36),
+        ],
+      ),
       body: GradientBackground(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Welcome Header
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  "Welcome back to Gradbond",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ),
-
               // Quick Actions
               _buildActionButton(context, "Search For Alumni", Icons.search, "/search"),
               const SizedBox(height: 16),

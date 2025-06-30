@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/app_logo.dart';
 import 'package:gradbond/home.dart';
 import 'bottom_navigation.dart';
 import 'alumni_list.dart';
@@ -24,6 +25,9 @@ class FindAlumni extends StatelessWidget {
             );
           },
         ),
+        actions: const [
+          AppLogo(size: 36),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(

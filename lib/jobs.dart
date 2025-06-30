@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/app_logo.dart';
 import 'package:gradbond/home.dart';
 import 'package:gradbond/models/job_model.dart';
 import 'package:gradbond/services/api_service.dart';
@@ -47,6 +48,9 @@ class _JobBoardPageState extends State<JobBoardPage> {
             );
           },
         ),
+        actions: const [
+          AppLogo(size: 36),
+        ],
       ),
       body: GradientBackground(
         child: Padding(

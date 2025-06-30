@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/app_logo.dart';
 import 'bottom_navigation.dart';
 import 'package:gradbond/models/alumni_model.dart';
 import 'publicAlumniProfilePage .dart';
@@ -186,6 +187,9 @@ Widget build(BuildContext context) {
         ),
       ),
       centerTitle: true,
+      actions: const [
+          AppLogo(size: 36),
+        ],
     ),
     
     body: Column(

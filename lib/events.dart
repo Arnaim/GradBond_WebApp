@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gradbond/app_logo.dart';
 import 'package:gradbond/home.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -82,6 +83,9 @@ class _EventsPageState extends State<EventsPage> {
             );
           },
         ),
+        actions: const [
+          AppLogo(size: 36),
+        ],
       ),
       body: GradientBackground(
         child: SafeArea(
