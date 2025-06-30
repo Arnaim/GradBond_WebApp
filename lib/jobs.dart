@@ -145,7 +145,7 @@ class _JobBoardPageState extends State<JobBoardPage> {
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(20),
                                         ),
-                                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                                        padding: const EdgeInsets.symmetric(horizontal: 10),
                                       ),
                                       child: const Text(
                                         'Apply',
