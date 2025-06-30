@@ -1,27 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:gradbond/find_alumni.dart';
 import 'package:gradbond/home.dart';
+import 'package:gradbond/services/storage/storage_mobile.dart';
 import 'login.dart'; 
-//import 'student_signup.dart'; 
-//import 'alumni_signup.dart';
 import 'signup_page.dart';
 import 'events.dart';
 import 'jobs.dart';
 
 
 
-void main(){
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final token = await StorageService.getToken();
+
+  runApp(MyApp(isLoggedIn: token != null));
 }
 
+
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+  const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const GradBond(),
+      home: isLoggedIn ? const HomePage() : const LoginScreen(),
      routes: {
           '/home': (context) => HomePage(),
           '/login': (context) => const LoginScreen(),  
