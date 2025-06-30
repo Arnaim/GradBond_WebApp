@@ -37,6 +37,7 @@ class _JobBoardPageState extends State<JobBoardPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
