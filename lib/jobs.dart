@@ -126,53 +126,37 @@ class _JobBoardPageState extends State<JobBoardPage> {
                               ),
                               const Spacer(),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      final url = job.jobLink;
-                                      if (await canLaunchUrl(Uri.parse(url))) {
-                                        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-                                      } else {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text("Could not open the job link")),
-                                        );
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      foregroundColor: Colors.black,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        final url = job.jobLink;
+                                        if (await canLaunchUrl(Uri.parse(url))) {
+                                          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text("Could not open the job link")),
+                                          );
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        foregroundColor: Colors.black,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(horizontal: 20),
                                       ),
-                                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                                    ),
-                                    child: const Text(
-                                      'Apply',
-                                      style: TextStyle(
-                                          color: Color(0xFF3A1D6F), fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      // You can show more details here
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      foregroundColor: Colors.black,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
+                                      child: const Text(
+                                        'Apply',
+                                        style: TextStyle(
+                                          color: Color(0xFF3A1D6F),
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                      padding: const EdgeInsets.symmetric(horizontal: 20),
                                     ),
-                                    child: const Text(
-                                      'Details',
-                                      style: TextStyle(
-                                          color: Color(0xFF3A1D6F), fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                              )
+                                  ],
+                                ),
                             ],
                           ),
                         );
