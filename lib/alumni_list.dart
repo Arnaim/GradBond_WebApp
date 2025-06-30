@@ -169,7 +169,7 @@ class _AlumniListPageState extends State<AlumniListPage> {
 
   int get _totalPages => (widget.alumniList.length / _itemsPerPage).ceil();
 
-  @override
+@override
 Widget build(BuildContext context) {
   return Scaffold(
     extendBodyBehindAppBar: true,
@@ -196,7 +196,7 @@ Widget build(BuildContext context) {
           child: widget.alumniList.isEmpty
               ? const Center(child: Text('No alumni found.'))
               : GridView.builder(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(16, kToolbarHeight + 24, 16, 16),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 16,
