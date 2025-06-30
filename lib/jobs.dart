@@ -43,7 +43,7 @@ class _JobBoardPageState extends State<JobBoardPage> {
       ),
       body: GradientBackground(
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.fromLTRB(16, kToolbarHeight + 24, 16, 16),
           child: Column(
             children: [
               const Text(
