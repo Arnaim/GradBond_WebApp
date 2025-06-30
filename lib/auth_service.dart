@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AuthService {
-  // In a real app, you would use Firebase Auth or your backend
-  // For demo purposes, we'll use simple in-memory storage
-  static final Map<String, String> _users = {}; // email: password
+
+  static final Map<String, String> _users = {}; 
 
   static Future<bool> signUp(String email, String password) async {
     if (_users.containsKey(email)) {
-      return false; // User already exists
+      return false; 
     }
     _users[email] = password;
     return true;

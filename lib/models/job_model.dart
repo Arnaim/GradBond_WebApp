@@ -1,16 +1,17 @@
 // models/job_model.dart
 class Job {
-  final int id;
-  final int userId;
-  final String title;
-  final String company;
-  final String jobLink;
-  final String jobType;
-  final String experience;
-  final String salary;
-  final String description;
-  final DateTime deadline;
+  final int id; // Job ID
+  final int userId; // ID of the user who posted the job
+  final String title; // Job title
+  final String company; // Company name
+  final String jobLink; // Link to apply
+  final String jobType; // Type of job (e.g., Full-time, Part-time)
+  final String experience; // Experience required
+  final String salary; // Salary offered
+  final String description; // Job description
+  final DateTime deadline; // Application deadline
 
+  // Constructor for Job model
   Job({
     required this.id,
     required this.userId,
@@ -24,6 +25,7 @@ class Job {
     required this.deadline,
   });
 
+  // Create Job object from JSON data
   factory Job.fromJson(Map<String, dynamic> json) {
     return Job(
       id: json['id'],
@@ -35,7 +37,7 @@ class Job {
       experience: json['experience'],
       salary: json['salary'],
       description: json['description'],
-      deadline: DateTime.parse(json['deadline']),
+      deadline: DateTime.parse(json['deadline']), // Convert string to DateTime
     );
   }
 }

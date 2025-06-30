@@ -12,13 +12,14 @@ class FindAlumni extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: true, // Body extends behind transparent app bar
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent, // Transparent app bar
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
+            // Navigate back to HomePage on back button press
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => HomePage()),
@@ -26,15 +27,15 @@ class FindAlumni extends StatelessWidget {
           },
         ),
         actions: const [
-          AppLogo(size: 36),
+          AppLogo(size: 36), // Show app logo on app bar
         ],
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFFE3DAFF), // Light purple
-              Color(0xFFE8E5E5), // Light grayish white
+              Color(0xFFE3DAFF), // Light purple gradient start
+              Color(0xFFE8E5E5), // Light grayish white gradient end
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -43,7 +44,7 @@ class FindAlumni extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center, // Center content vertically
             children: const [
               Text(
                 "Find Alumni of your University",
@@ -52,13 +53,13 @@ class FindAlumni extends StatelessWidget {
                   fontSize: 24,
                 ),
               ),
-              SizedBox(height: 20),
-              SearchForm(),
+              SizedBox(height: 20), // Spacing between text and form
+              SearchForm(), // The search form widget
             ],
           ),
         ),
       ),
-      bottomNavigationBar: bottomNavigation(context: context),
+      bottomNavigationBar: bottomNavigation(context: context), // Bottom nav bar
     );
   }
 }
@@ -71,61 +72,65 @@ class SearchForm extends StatefulWidget {
 }
 
 class _SearchFormState extends State<SearchForm> {
+  // Controllers for input fields
   final _universityController = TextEditingController();
   final _departmentController = TextEditingController();
   final _companyController = TextEditingController();
   final _jobTitleController = TextEditingController();
 
-  bool _isLoading = false;
+  bool _isLoading = false; // Loading state to show progress indicator
 
-  //find alumni function using api
+  // Function to find alumni using API call
+  Future<void> _findAlumni() async {
+    setState(() => _isLoading = true); // Show loading spinner
 
-  Future<void> _findAlumni()  async {
-  setState(() => _isLoading = true);
+    try {
+      final token = await StorageService.getToken(); // Get saved auth token
 
-  try {
-    final token = await StorageService.getToken();
+      if (token == null) {
+        // Show error if user not logged in
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You must be logged in to search')),
+        );
+        setState(() => _isLoading = false);
+        return;
+      }
 
-    if (token == null) {
+      // Call API to find alumni based on input criteria
+      final alumniList = await ApiService.findAlumni(
+        university: _universityController.text.trim(),
+        department: _departmentController.text.trim(),
+        company: _companyController.text.trim(),
+        jobTitle: _jobTitleController.text.trim(),
+      );
+
+      if (alumniList.isEmpty) {
+        // Show message if no alumni found
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No alumni found')),
+        );
+      } else {
+        // Navigate to AlumniListPage to show results
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AlumniListPage(alumniList: alumniList),
+          ),
+        );
+      }
+    } catch (e) {
+      // Show error message on exception
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You must be logged in to search')),
+        SnackBar(content: Text('Failed to fetch alumni: $e')),
       );
-      setState(() => _isLoading = false);
-      return;
+    } finally {
+      setState(() => _isLoading = false); // Hide loading spinner
     }
-
-    final alumniList = await ApiService.findAlumni(
-      university: _universityController.text.trim(),
-      department: _departmentController.text.trim(),
-      company: _companyController.text.trim(),
-      jobTitle: _jobTitleController.text.trim(),
-    );
-
-    if (alumniList.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No alumni found')),
-      );
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AlumniListPage(alumniList: alumniList),
-        ),
-      );
-    }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to fetch alumni: $e')),
-    );
-  } finally {
-    setState(() => _isLoading = false);
   }
-}
-
-
 
   @override
   void dispose() {
+    // Dispose controllers to free resources
     _universityController.dispose();
     _departmentController.dispose();
     _companyController.dispose();
@@ -136,13 +141,13 @@ class _SearchFormState extends State<SearchForm> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4, // Slight shadow around card
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // Rounded corners
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: const LinearGradient(
-            colors: [Color(0xFFE3DAFF), Color(0xFFE8E5E5)],
+            colors: [Color(0xFFE3DAFF), Color(0xFFE8E5E5)], // Gradient background
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -151,6 +156,7 @@ class _SearchFormState extends State<SearchForm> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              // Input field for University
               TextFormField(
                 controller: _universityController,
                 decoration: const InputDecoration(
@@ -158,7 +164,9 @@ class _SearchFormState extends State<SearchForm> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 16), // Spacing
+
+              // Input field for Department
               TextFormField(
                 controller: _departmentController,
                 decoration: const InputDecoration(
@@ -167,6 +175,8 @@ class _SearchFormState extends State<SearchForm> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // Input field for Company
               TextFormField(
                 controller: _companyController,
                 decoration: const InputDecoration(
@@ -175,6 +185,8 @@ class _SearchFormState extends State<SearchForm> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // Input field for Job Title
               TextFormField(
                 controller: _jobTitleController,
                 decoration: const InputDecoration(
@@ -183,12 +195,14 @@ class _SearchFormState extends State<SearchForm> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // Show loading spinner or Find Now button
               _isLoading
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
-                      onPressed: _findAlumni,
+                      onPressed: _findAlumni, // Trigger search on press
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(58, 29, 111, 1),
+                        backgroundColor: const Color.fromRGBO(58, 29, 111, 1), // Button color
                         minimumSize: const Size(200, 50),
                       ),
                       child: const Text(

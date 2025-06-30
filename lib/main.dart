@@ -7,27 +7,24 @@ import 'signup_page.dart';
 import 'events.dart';
 import 'jobs.dart';
 
-
-
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); // Ensures everything is ready before runApp
 
-  final token = await StorageService.getToken();
+  final token = await StorageService.getToken(); // Get saved token (if logged in)
 
-  runApp(MyApp(isLoggedIn: token != null));
+  runApp(MyApp(isLoggedIn: token != null)); // Start app with login status
 }
 
-
 class MyApp extends StatelessWidget {
-  final bool isLoggedIn;
+  final bool isLoggedIn; // Whether user is logged in or not
   const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: isLoggedIn ? const HomePage() : const GradBond(),
-     routes: {
+      debugShowCheckedModeBanner: false, // Hide debug banner
+      home: isLoggedIn ? const HomePage() : const GradBond(), // Show home if logged in, else landing page
+      routes: {
           '/home': (context) => HomePage(),
           '/login': (context) => const LoginScreen(),  
           '/search': (context) =>  FindAlumni(),
@@ -53,7 +50,7 @@ class GradBond extends StatelessWidget {
                 height: constraints.maxHeight,
                 width: constraints.maxWidth,
                 child: Image.asset(
-                  'assets/images/landingPage.png',
+                  'assets/images/landingPage.png', // Background image
                   fit: BoxFit.cover,
                 ),
               ),
@@ -67,13 +64,13 @@ class GradBond extends StatelessWidget {
                       children: [
                         const SizedBox(height: 20),
                         Image.asset(
-                          'assets/images/logo.png',
+                          'assets/images/logo.png', // Logo
                           height: 150,
                           width: 300,
                         ),
                         const SizedBox(height: 10),
                         const Text(
-                          "Connect, discover, and grow",
+                          "Connect, discover, and grow", // Tagline
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -83,7 +80,7 @@ class GradBond extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         const Text(
-                          'Build your alumni network today.',
+                          'Build your alumni network today.', // Subtitle
                           style: TextStyle(
                             fontSize: 16,
                             color: Color.fromRGBO(53, 57, 58, 1),
@@ -94,10 +91,10 @@ class GradBond extends StatelessWidget {
                           width: double.infinity,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromRGBO(1, 87, 182, 1),
+                              backgroundColor: Color.fromRGBO(1, 87, 182, 1), // Blue login button
                             ),
                             onPressed: () {
-                              Navigator.pushNamed(context, '/login');
+                              Navigator.pushNamed(context, '/login'); // Go to login
                             },
                             child: const Text(
                               'Login',
@@ -116,7 +113,7 @@ class GradBond extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const SignUpPage()),
+                                    builder: (context) => const SignUpPage()), // Go to sign up
                               );
                             },
                             child: const Text(
@@ -129,20 +126,20 @@ class GradBond extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 40),
-                          const Text(
-                            '© 2025 Conditional, All Rights Reserved.',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              shadows: [
-                                Shadow(offset: Offset(-1, -1), color: Colors.black),
-                                Shadow(offset: Offset(1, -1), color: Colors.black),
-                                Shadow(offset: Offset(1, 1), color: Colors.black),
-                                Shadow(offset: Offset(-1, 1), color: Colors.black),
-                              ],
-                            ),
+                        const Text(
+                          '© 2025 Conditional, All Rights Reserved.', // Footer text
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(offset: Offset(-1, -1), color: Colors.black),
+                              Shadow(offset: Offset(1, -1), color: Colors.black),
+                              Shadow(offset: Offset(1, 1), color: Colors.black),
+                              Shadow(offset: Offset(-1, 1), color: Colors.black),
+                            ],
                           ),
+                        ),
                       ],
                     ),
                   ),

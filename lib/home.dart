@@ -9,7 +9,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -18,8 +17,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<List<Event>> _eventsFuture;
+  late Future<List<Event>> _eventsFuture;  // Future to hold events data for async loading
 
+  // Function to fetch events data directly from API endpoint
   Future<List<Event>> fetchEventsDirect() async {
     final response = await http.get(
       Uri.parse('https://gradbond.up.railway.app/api/events/'),
@@ -29,23 +29,26 @@ class _HomePageState extends State<HomePage> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final List<dynamic> eventsJson = data['events'];
+      // Map JSON data to list of Event model objects
       return eventsJson.map((e) => Event.fromJson(e)).toList();
     } else {
       throw Exception('Failed to load events: ${response.statusCode}');
     }
   }
-  late Future<List<Alumni>> _alumniFuture;
+
+  late Future<List<Alumni>> _alumniFuture;  // Future for alumni data async loading
 
   @override
   void initState() {
     super.initState();
-    _eventsFuture = fetchEventsDirect();
-    _alumniFuture = ApiService.fetchAlumniForHome();
+    _eventsFuture = fetchEventsDirect(); // Initialize future to fetch events
+    _alumniFuture = ApiService.fetchAlumniForHome(); // Initialize future for alumni data
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // AppBar with title and app logo on the right
       appBar: AppBar(
         title: Text(
             "Welcome back to Gradbond",
@@ -55,13 +58,15 @@ class _HomePageState extends State<HomePage> {
           AppLogo(size: 36),
         ],
       ),
+
+      // Body with gradient background and scrollable column content
       body: GradientBackground(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Quick Actions
+              // Quick action buttons to navigate to different pages
               _buildActionButton(context, "Search For Alumni", Icons.search, "/search"),
               const SizedBox(height: 16),
               _buildActionButton(context, "Browse Events", Icons.event, "/event"),
@@ -69,25 +74,31 @@ class _HomePageState extends State<HomePage> {
               _buildActionButton(context, "Go To Jobs", Icons.work, "/jobs"),
               const SizedBox(height: 30),
 
-              // Events Section
+              // Section title for upcoming events
               const Text("Upcoming Events", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
+
+              // FutureBuilder to handle events data async loading and UI rendering
               FutureBuilder<List<Event>>(
                 future: _eventsFuture,
                 builder: (context, snapshot) {
                   print('FutureBuilder snapshot: state=${snapshot.connectionState}, hasData=${snapshot.hasData}, hasError=${snapshot.hasError}');
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Show loading spinner while waiting for data
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
+                    // Show error message if loading fails
                     print('FutureBuilder error: ${snapshot.error}');
                     return Text('Failed to load events: ${snapshot.error}');
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    // Show message if no event data is found
                     print('FutureBuilder: No events data found or empty');
                     return const Text("No events available.");
                   }
 
                   final events = snapshot.data!;
+                  // Horizontal list view to display event cards
                   return SizedBox(
                     height: 280,
                     child: ListView.separated(
@@ -105,21 +116,27 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 25),
 
-              // Alumni Section
+              // Section title for alumni connections
               const Text("Connect with Alumni", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
+
+              // FutureBuilder for alumni list async loading and UI
               FutureBuilder<List<Alumni>>(
                 future: _alumniFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Show loading indicator while fetching alumni data
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
+                    // Show error message on failure
                     return Text('Error: ${snapshot.error}');
                   } else if (snapshot.data == null || snapshot.data!.isEmpty) {
+                    // Show message if no alumni found
                     return const Text("No alumni found.");
                   }
 
                   final alumniList = snapshot.data!;
+                  // Show up to 5 alumni cards vertically
                   return Column(
                     children: alumniList.take(5).map((alumni) {
                       return _buildAlumniCard(
@@ -137,10 +154,13 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+
+      // Bottom navigation bar imported from your shared component
       bottomNavigationBar: bottomNavigation(context: context),
     );
   }
 
+  // Widget for quick action buttons on home page
   Widget _buildActionButton(BuildContext context, String text, IconData icon, String routeName) {
     return SizedBox(
       width: double.infinity,
@@ -157,6 +177,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Widget to build each event card for the events list
   Widget _buildEventCard(String title, String date, String imageUrl, String registrationLink) {
   return SizedBox(
     width: 180,
@@ -166,7 +187,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Image
+          // Event image container with network image
           Container(
             height: 120,
             decoration: BoxDecoration(
@@ -174,7 +195,7 @@ class _HomePageState extends State<HomePage> {
               image: DecorationImage(
                 image: NetworkImage(imageUrl),
                 fit: BoxFit.cover,
-                onError: (exception, stackTrace) {},
+                onError: (exception, stackTrace) {}, // Handle image loading errors gracefully
               ),
             ),
           ),
@@ -185,6 +206,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Event title text
                   Text(
                     title,
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
@@ -192,6 +214,7 @@ class _HomePageState extends State<HomePage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
+                  // Event date text
                   Text(
                     date,
                     style: const TextStyle(color: Colors.white, fontSize: 14),
@@ -241,6 +264,7 @@ class _HomePageState extends State<HomePage> {
   );
 }
 
+  // Widget to build each alumni card for the alumni list
   Widget _buildAlumniCard(String name, String position, String company, String university, String imageUrl) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -248,20 +272,25 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
+            // Alumni profile picture avatar
             CircleAvatar(
               radius: 28,
               backgroundImage: imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
-              backgroundColor: Colors.grey[300],
+              backgroundColor: Colors.grey[300], // Default background color if no image
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Alumni name
                   Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 4),
+                  // Alumni job title
                   Text(position, style: TextStyle(color: Colors.grey[600])),
+                  // Alumni company
                   Text(company, style: TextStyle(color: Colors.grey[600])),
+                  // Alumni university
                   Text(university, style: const TextStyle(fontWeight: FontWeight.bold)),
                 ],
               ),
